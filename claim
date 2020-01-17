@@ -1,0 +1,15 @@
+--select * from claim_module
+--select Claim_module()
+CREATE OR REPLACE FUNCTION Claim_module()
+   RETURNS void as $$
+   begin
+
+
+delete from claim_module;
+insert into claim_module (date,user_id,subscriber,mrn,purpos,charge,paid,patient)
+select  DATE(min(w.date)) as d,m.doctor_id::integer,m.first_name,m.mrn,extract(quarter from w.date)::character varying(200)  || 'th Quarter Review' as purpos,'80' as charge ,'80' as paid,m.first_name  from device_details as w
+inner  join subscriber_profile as m  on w.user_id=m.user_id where mrn is not null and mrn <> '0'
+group by m.doctor_id,m.first_name,m.mrn,extract(quarter from w.date),purpos ; 
+
+end;
+																	   $$ LANGUAGE plpgsql;

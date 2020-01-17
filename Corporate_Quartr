@@ -1,0 +1,18 @@
+--select cQuarter()
+create OR REPLACE FUNCTION cQuarter()
+RETURNS void as $$ 
+Begin
+drop  table corporate_Quarter;
+create table corporate_Quarter as
+select corporate_intf.vital,corporate_intf.keywords,corporate_intf.initial,corporate_Actualf.Actual from corporate_intf left join corporate_Actualf on Corporate_Actualf.vital = corporate_intf.vital
+and Corporate_Actualf.keywords = corporate_intf.keywords group by corporate_intf.vital,corporate_intf.keywords,corporate_intf.initial,corporate_Actualf.Actual order by corporate_intf.keywords;
+alter table corporate_Quarter add column target numeric(15,9);
+alter table corporate_Quarter add column Acheived numeric(15,9);
+alter table corporate_Quarter add column target_new numeric(15,9);
+update corporate_Quarter set acheived = case when 
+(initial-target) = 0 then 0 else ((initial-actual ) / (initial-target))*100 end;
+END;
+$$ LANGUAGE plpgsql;
+
+
+

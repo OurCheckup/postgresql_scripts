@@ -1,0 +1,32 @@
+select sum(steps) from device_details where user_id = 411 AND date::date between '2019-04-13' and '2019-04-21' group by user_id
+select * from mode where user_id = 411 
+select * from Initial_3 where user_id = 394 and date::date='2019-04-11'
+ALTER TABLE Initial_3
+ALTER COLUMN Target  TYPE Decimal(10,2);
+select * from claim_module
+alter table claim_module drop column  id varchar(),
+CREATE SEQUENCE invoices_no START WITH 100000 ;
+select * from final_quarter where user_id = 411
+ALTER TABLE claim_module 
+add COLUMN  Invoice_no SERIAL 
+alter table claim_module
+alter column id start with 100000
+SET DEFAULT CAST(NEXTVAL('invoices_token_seq') AS varCHAR(15));
+													   
+													   update claim_module 
+														  
+														  select * from subscriber_profile
+													  delete from subscriber_profile where race = 'AA'
+SET Invoice_no = 123,
+    token = '412a1q-1' 
+WHERE
+ user_id = 411;
+													   
+													   ALTER TABLE claim_module 
+DROP COLUMN token;
+				
+													   
+										select *  FROM public."device_agg_fweekly1"	where user_id = 411 and	date::date='2019-04-10'
+														  
+														  
+										 select * from device_agg_final_weekly where user_id = 411 and date::date='2019-04-15'

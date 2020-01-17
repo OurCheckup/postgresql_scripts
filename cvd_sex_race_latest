@@ -1,0 +1,56 @@
+
+--select distinct user_id into u1 from cvd_sample1 
+--select names,s0_10,mnxb,predict,cvd_predict,opt_predict,opt_cvd_predict,
+--sex_race,ten_year_ascvd,opt_ten_year_ascvd,user_id into op from optimal_values cross join u1
+create OR REPLACE FUNCTION cvd_sex_race()
+RETURNS void as $$ 
+Begin
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;	
+update op set sex_race=
+ ( select case when   values='Male' then 1 else 0 end from cvd_sample1 where risk_factor='sex'and user_id=userid
+  group by values,user_id limit 1)*
+ ( select case when   values='AA_Men'then 1 else 0 end from cvd_sample1 where risk_factor='race'and 
+  user_id=userid
+  group by values,user_id limit 1)
+where names='AA_men' and user_id=userid ;
+			   
+	update op set sex_race=
+ ( select case when   values='Male' then 1 else 0 end from cvd_sample1 where risk_factor='sex'and user_id=userid group by values ,user_id limit 1)*
+ ( select case when   values='WH_Men'then 1 else 0 end from cvd_sample1 where risk_factor='race'and user_id=userid group by values,user_id limit 1)
+where names='WH_men' and user_id=userid; 										   
+
+update op set sex_race=
+ ( select case when   values='Female' then 1 else 0 end from cvd_sample1 where risk_factor='sex'and user_id=userid group by values,user_id limit 1)*
+ ( select case when   values='AA_Women'then 1 else 0 end from cvd_sample1 where risk_factor='race'and user_id=userid group by values,user_id limit 1)
+where names='AA_Women' and user_id=userid;
+
+update op set sex_race=
+ ( select case when   values='Female' then 1 else 0 end from cvd_sample1 where risk_factor='sex'and user_id=userid group by values,user_id limit 1)*
+ ( select case when   values='WH_Women'then 1 else 0 end from cvd_sample1 where risk_factor='race'and user_id=userid group by values,user_id limit 1)
+where names='WH_Women' and user_id=userid;
+													   
+loop1 :=loop1+1;
+end LOOP;
+end;
+
+END;
+$$ LANGUAGE plpgsql;
+--select cvd_sex_race();
+			   
+										   
+		
+
+
+ 
+ 
+ 
+ 
+ 

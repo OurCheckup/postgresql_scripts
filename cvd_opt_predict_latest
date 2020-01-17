@@ -1,0 +1,88 @@
+-- select * from op where user_id = 411;
+--update op set opt_predict = 0,opt_cvd_predict =0
+create OR REPLACE FUNCTION cvd_opt_predict()
+RETURNS void as $$ 
+Begin
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;
+
+update op set opt_predict=
+17.1141*(select optimal from ascvd where names='lnage'and user_id=userid group by optimal)+
+ 0.9396*(select optimal from ascvd where names='lntot'and user_id=userid  group by optimal)+
+ (-18.9196*(select optimal from ascvd where names='lnhdl'and user_id=userid  group by optimal))+
+ 4.4748*(select optimal from ascvd where names ='agehdl'and user_id=userid  group by optimal)+
+ 29.2907*(select optimal from ascvd where names='trlnsbp'and user_id=userid  group by optimal)+
+ (-6.4321*(select optimal from ascvd where names='agetsbp'and user_id=userid  group by optimal))+
+ 27.8197*(select optimal from ascvd where names='ntrlnsbp'and user_id=userid  group by optimal)+
+ (-6.0873*(select optimal from ascvd where names='agentsbp'and user_id=userid  group by optimal))+
+ 0.6908*(select optimal_values::int8 from cvd_sample1 where risk_factor='smoker'and user_id=userid  group by optimal_values)+
+ 0.8738*(select optimal_values::int8 from cvd_sample1 where risk_factor='diabetes'and user_id=userid  group by optimal_values)
+ where names='AA_Women'and user_id=userid;
+ 
+ update op set opt_predict=
+-29.799*(select optimal from ascvd where names='lnage'and user_id=userid  group by optimal)+
+4.884*(select optimal from ascvd where names='age2'and user_id=userid  group by optimal)+
+13.54*(select optimal from ascvd where names='lntot'and user_id=userid  group by optimal)+
+-3.114*(select optimal from ascvd where names='agetc'and user_id=userid  group by optimal)+
+-13.578*(select optimal from ascvd where names='lnhdl'and user_id=userid  group by optimal)+
+3.149*(select optimal from ascvd where names='agehdl'and user_id=userid  group by optimal)+
+2.019*(select optimal from ascvd where names='trlnsbp'and user_id=userid  group by optimal)+
+1.957*(select optimal from ascvd where names='ntrlnsbp'and user_id=userid  group by optimal)+
+7.574*(select optimal_values::int8 from cvd_sample1 where risk_factor='smoker'and user_id=userid  group by optimal_values) +
+-1.665*(select optimal from ascvd where names='agesmoke' and user_id=userid  group by optimal)+
+0.661*(select optimal_values::int8 from cvd_sample1 where risk_factor='diabetes'and user_id=userid  group by optimal_values)
+ where names='WH_Women'and user_id=userid;
+ 
+ update op set opt_predict=
+2.469*(select optimal from ascvd where names='lnage'and user_id=userid  group by optimal)
++0.302*(select optimal from ascvd where names='lntot'and user_id=userid  group by optimal)+
+-0.307*(select optimal from ascvd where names='lnhdl'and user_id=userid  group by optimal)+
+1.916*(select optimal from ascvd where names='trlnsbp'and user_id=userid  group by optimal)+
+1.809*(select optimal from ascvd where names='ntrlnsbp'and user_id=userid  group by optimal)+
+0.549*(select optimal_values::int8 from cvd_sample1 where risk_factor='smoker'and user_id=userid  group by optimal_values)+
+0.645*(select optimal_values::int8 from cvd_sample1 where risk_factor='diabetes'and user_id=userid  group by optimal_values)
+ where names='AA_men'and user_id=userid;
+ 
+ 
+ update op set opt_predict=
+12.344*(select optimal from ascvd where names='lnage'and user_id=userid  group by optimal)+
+ 11.853*(select optimal from ascvd where names='lntot'and user_id=userid  group by optimal)+
+ -2.664*(select optimal from ascvd where names='agetc'and user_id=userid  group by optimal)+
+ -7.99*(select optimal from ascvd where names='lnhdl'and user_id=userid  group by optimal)+
+ 1.769*(select optimal from ascvd where names = 'agehdl'and user_id=userid  group by optimal)+
+ 1.797*(select optimal from ascvd where names='trlnsbp'and user_id=userid  group by optimal)+
+ 1.764*(select optimal from ascvd where names='ntrlnsbp'and user_id=userid  group by optimal)+
+ 7.837*(select optimal_values::int8 from cvd_sample1 where risk_factor='smoker'and user_id=userid  group by optimal_values)+
+ -1.795*(select optimal from ascvd where names='agesmoke'and user_id=userid  group by optimal)+
+ 0.658*(select optimal_values::int8 from cvd_sample1 where risk_factor='diabetes'and user_id=userid  group by optimal_values)
+ where names='WH_men'and user_id=userid;
+ update op set opt_cvd_predict=1-(0.95334^(EXP(opt_predict-86.6081)))
+ where names='AA_Women'and user_id=user_id;
+ update op set opt_cvd_predict=1-(0.96652^(EXP(opt_predict-(-29.1817))))
+ where names='WH_Women'and user_id=userid;
+ update op set opt_cvd_predict=1-(0.89536^(EXP(opt_predict-19.5425)))
+ where names='AA_men'and user_id=userid;
+ update op set opt_cvd_predict=1-(0.91436^(EXP(opt_predict-61.1816)))
+ where names='WH_men'and user_id=userid;
+ 
+ loop1 :=loop1+1;
+end LOOP;
+end;
+
+END;
+$$ LANGUAGE plpgsql;
+--select cvd_opt_predict();
+--select * from op
+ 
+ 
+ 
+ 
+ 
+ 

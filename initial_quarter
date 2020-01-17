@@ -1,0 +1,54 @@
+-- select * from initial_3 where user_id = 394
+--update initial_3
+--set initial = 31.05 and target = 33.04 where vital = 'bmi'
+--select * from final_quarter where user_id = 411 and quarter = 2
+--delete from initial_3
+--select initialreport_2()
+CREATE OR REPLACE FUNCTION public.initialreport_2(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE loop1 integer:=1; 
+   DECLARE userid integer;
+   DECLARE count1 integer;
+   DECLARE vital_1 character varying(30);
+Begin   
+
+drop table  a11;
+create table a11 (id int GENERATED ALWAYS AS IDENTITY,user_id int,vital character varying(30));
+insert into a11 (user_id,vital)
+select distinct user_id,vital  from final_quarter where user_id not in (select distinct user_id from initial_3);
+select count (*) into count1 from a11 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from a11 where id=loop1;
+select vital into vital_1 from a11 where id=loop1;			   
+if exists(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=1) then	
+
+insert into initial_3 select vital,user_id,initial,target  from final_quarter where user_id = userid and quarter=1 and vital=vital_1  group by vital,user_id,initial,target ;
+elsif  exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=2) then	
+
+insert into initial_3 select vital,user_id,initial,target  from final_quarter where user_id = userid and quarter=2 and vital=vital_1  group by vital,user_id,initial,target ;
+elsif  exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=3) then	
+			   
+insert into initial_3 select vital,user_id,initial,target from final_quarter where user_id = userid and quarter=3 and vital=vital_1  group by vital,user_id,initial,target ;
+elsif  exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=4) then	
+
+insert into initial_3 select vital,user_id,initial,target  from final_quarter where user_id = userid and quarter=4 and vital=vital_1  group by vital,user_id,initial,target ;
+end if;
+loop1 :=loop1+1;
+end loop;
+end;
+						 $BODY$;
+
+ALTER FUNCTION public.initialreport()
+    OWNER TO postgres;			   
+			   			   			   
+			   

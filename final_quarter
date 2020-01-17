@@ -1,0 +1,297 @@
+--select * from initial_3 where user_id = 652and quarter = 2
+--select *  from medical_summary where user_id = 411
+--select *  from final_quarter  where user_id  = 524 and quarter = 2
+--select * from final_quarter  where user_id = 658
+--select * from public."Quaterly_Pivot" where user_id = 658 and quarter = 2
+--select * from device_details where user_id = 592
+--select * from final_quarter where user_id = 652 and quarter = 2
+--select * from public."Quaterly_Pivot" where user_id = 524 and quarter = 3
+--select distinct user_id from final_quarter user_id where date >= (select max(date) - interval '0 hours 5 minute' from final_quarter)
+--delete from final_quarter where user_id in (select user_id from public."Quaterly_Pivot"  where date >=
+--(select max(date) - interval '24 hours 0 minute' from public."Quaterly_Pivot"))
+--delete from final_quarter where user_id in (select user_id from public."Quaterly_Pivot"  where date >=
+--(select max(date) - interval '5 minute' from public."Quaterly_Pivot")) and vital in (select vital from public."Quaterly_Pivot"  where date >=
+--(select max(date) - interval '5 minute' from public."Quaterly_Pivot"));
+--select Qjobs3()
+CREATE OR REPLACE FUNCTION Qjobs3()
+RETURNS void as $$
+
+Declare vital_1 varchar(30); 
+declare quarter_1 Double precision;
+declare year_1 Double precision;
+declare user_id_1 integer;
+
+declare initial_1 Decimal(10,2);
+declare target_1 Decimal(10,2);
+declare achieved_1 Decimal(10,2); declare performance_1  character varying(30);
+declare Normal_Count_1 Decimal(10,2);
+declare total_count_1 Decimal(10,2);
+declare target_new_1 Decimal(10,2);
+
+declare count11 integer;
+declare loop11 integer :=1;
+
+begin
+perform initialreport();
+perform initialreport5();
+if exists (SELECT 1 FROM information_schema.tables WHERE lower(table_name) = 'final_quarter') then
+
+
+select count(distinct (public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id)) into count11 
+from public."Quaterly_Pivot" ;
+
+drop table public."Quaterly_Pivot1" ;
+
+create table public."Quaterly_Pivot1" (id serial,vital varchar(30),quarter Double precision,
+year Double precision,user_id integer,initial Decimal(10,2),target Decimal(10,2),achieved Decimal(10,2),performance character varying(30),Normal_Count Decimal(10,2)
+,total_count Decimal(10,2),target_new Decimal(10,2));
+insert into public."Quaterly_Pivot1"(vital,quarter,year,user_id,initial,target,achieved,performance,Normal_Count,total_count,target_new)
+
+select public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new 
+from public."Quaterly_Pivot" where public."Quaterly_Pivot".user_id not in (select distinct public."Quaterly_Pivot1".user_id from public."Quaterly_Pivot1") 
+group by public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new ;
+--delete from final_quarter where user_id in (select user_id from public."Quaterly_Pivot"  where date >=
+--(select max(date) - interval '0 hours 5 minute' from public."Quaterly_Pivot"));
+insert into final_quarter(vital,quarter,year,user_id,initial,target,achieved,performance,
+Normal_Count,total_count,target_new) 
+select public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new 
+
+from public."Quaterly_Pivot" where user_id not in (select distinct user_id from final_quarter) 
+
+group by public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new;
+
+											  
+DECLARE loop12 integer:=1; 
+DECLARE userid_2 integer;
+DECLARE count45 integer;
+DECLARE vital_2 character varying(30);
+Begin 
+
+drop table a1121;
+create table a1121 (id int GENERATED ALWAYS AS IDENTITY,user_id int,vital character varying(30));
+insert into a1121 (user_id,vital)
+select distinct user_id,vital from public."Quaterly_Pivot";
+select count (*) into count45 from a1121 ;
+
+while (loop12<=(count45)) LOOP
+select user_id into userid_2 from a1121 where id=loop12;
+select vital into vital_2 from a1121 where id=loop12;	
+insert into final_quarter(vital,quarter,year,user_id,initial,target,achieved,performance,
+Normal_Count,total_count,target_new) 
+select public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new 
+
+from public."Quaterly_Pivot" where user_id  = userid_2  and 
+											  vital not in (select distinct vital from final_quarter where user_id = userid_2 )
+
+group by public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new;
+
+insert into final_quarter(vital,quarter,year,user_id,initial,target,achieved,performance,
+Normal_Count,total_count,target_new) 
+select public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new 
+
+from public."Quaterly_Pivot" where user_id  = userid_2  and 
+											  quarter not in (select distinct quarter from final_quarter where user_id = userid_2 )
+
+group by public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new;
+
+insert into final_quarter(vital,quarter,year,user_id,initial,target,achieved,performance,
+Normal_Count,total_count,target_new) 
+select public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new 
+
+from public."Quaterly_Pivot" where user_id  = userid_2  and 
+											  year not in (select distinct year from final_quarter where user_id = userid_2 )
+
+group by public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new;
+				
+				
+loop12 :=loop12+1;
+end loop;
+
+end;
+				
+
+DECLARE loop1 integer:=1; 
+DECLARE userid integer;
+DECLARE count1 integer;
+DECLARE vital_1 character varying(30);
+Begin 
+
+drop table a112;
+create table a112 (id int GENERATED ALWAYS AS IDENTITY,user_id int,vital character varying(30));
+insert into a112 (user_id,vital)
+select distinct user_id,vital from final_quarter ;
+select count (*) into count1 from a112 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from a112 where id=loop1;
+select vital into vital_1 from a112 where id=loop1;	
+
+
+if not exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=2) then	
+insert into final_quarter(vital,quarter,year,user_id,initial,target,achieved,performance,
+Normal_Count,total_count,target_new) 
+select public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new 
+
+from public."Quaterly_Pivot" where user_id = userid and quarter =2 and vital = vital_1
+group by public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new; 
+
+
+elsif not exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=3) then	
+
+insert into final_quarter(vital,quarter,year,user_id,initial,target,achieved,performance,
+Normal_Count,total_count,target_new) 
+select public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new 
+
+from public."Quaterly_Pivot" where user_id = userid and quarter =3 and vital = vital_1
+group by public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new; 
+elsif not exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=4) then	
+
+insert into final_quarter(vital,quarter,year,user_id,initial,target,achieved,performance,
+Normal_Count,total_count,target_new) 
+select public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new 
+
+from public."Quaterly_Pivot" where user_id = userid and quarter =4 and vital = vital_1
+group by public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new; 
+end if;
+loop1 :=loop1+1;
+end loop;
+
+end;
+
+
+WHILE (loop11<=(count11)) LOOP
+				--select * from public."Quaterly_Pivot1" where user_id = 651
+
+select public."Quaterly_Pivot1".vital into vital_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+select public."Quaterly_Pivot1".quarter into quarter_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+select public."Quaterly_Pivot1".year into year_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+select public."Quaterly_Pivot1".user_id into user_id_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+select public."Quaterly_Pivot1".initial into initial_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+select public."Quaterly_Pivot1".Target into target_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;	
+select public."Quaterly_Pivot1".achieved into achieved_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+select public."Quaterly_Pivot1".performance into performance_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+select public."Quaterly_Pivot1".Normal_Count into Normal_Count_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+select public."Quaterly_Pivot1".total_count into total_count_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+select public."Quaterly_Pivot1".target_new into target_new_1 from public."Quaterly_Pivot1" where public."Quaterly_Pivot1".id=loop11;
+if initial_1 = 0 or initial_1 is null then
+
+select public."final_quarter".initial into initial_1 from public."final_quarter" where public."final_quarter".vital=vital_1 and
+public."final_quarter".quarter=quarter_1 and public."final_quarter".year=year_1 and public."final_quarter".user_id=user_id_1;
+end if;
+if target_1 = 0 or target_1 is null then
+
+select public."final_quarter".target into target_1 from public."final_quarter" where public."final_quarter".vital=vital_1 and
+public."final_quarter".quarter=quarter_1 and public."final_quarter".year=year_1 and public."final_quarter".user_id=user_id_1;
+--else
+--select public."Quaterly_Pivot".target into target_1 from public."Quaterly_Pivot" where public."Quaterly_Pivot".vital=vital_1 and
+--public."Quaterly_Pivot".quarter=quarter_1 and public."Quaterly_Pivot".year=year_1 and public."Quaterly_Pivot".user_id=user_id_1;
+
+
+end if;
+if achieved_1 = 0 or achieved_1 is null then
+
+select public."final_quarter".achieved into achieved_1 from public."final_quarter" where public."final_quarter".vital=vital_1 and
+public."final_quarter".quarter=quarter_1 and public."final_quarter".year=year_1 and public."final_quarter".user_id=user_id_1;
+end if;
+if target_new_1 = 0 or target_new_1 is null then
+
+select public."final_quarter".target_new into target_new_1 from public."final_quarter" where public."final_quarter".vital=vital_1 and
+public."final_quarter".quarter=quarter_1 and public."final_quarter".year=year_1 and public."final_quarter".user_id=user_id_1;
+end if;
+update public."final_quarter" set initial=initial_1,target=target_1,
+achieved=achieved_1,performance=performance_1,
+Normal_Count=Normal_Count_1,
+total_count=total_count_1,target_new=target_new_1
+where vital=vital_1 and 
+quarter=quarter_1 and year=year_1 and user_id=user_id_1;
+loop11 :=loop11+1;
+end LOOP;
+end if;
+
+
+if not exists (SELECT 1 FROM information_schema.tables WHERE lower(table_name) = 'final_quarter') then
+
+CREATE TABLE final_quarter(id serial,vital varchar(30),quarter Double precision,
+year Double precision,user_id integer,initial Decimal(10,2),target Decimal(10,2),achieved Decimal(10,2),performance Decimal(10,2),Normal_Count Decimal(10,2)
+,total_count Decimal(10,2),target_new Decimal(10,2));
+insert into final_quarter(vital,quarter,year,user_id,initial,target,achieved,performance,
+Normal_Count,total_count,target_new) 
+select public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new 
+
+from public."Quaterly_Pivot" 
+group by public."Quaterly_Pivot".vital,public."Quaterly_Pivot".quarter,public."Quaterly_Pivot".year,public."Quaterly_Pivot".user_id,
+public."Quaterly_Pivot".initial,public."Quaterly_Pivot".target,
+public."Quaterly_Pivot".achieved,public."Quaterly_Pivot".performance,
+public."Quaterly_Pivot".Normal_Count,public."Quaterly_Pivot".total_count,public."Quaterly_Pivot".target_new; 
+
+
+end if;
+update final_quarter set performance=case when (round(initial,2)-round(target,2)) = 0 then 0 else 
+					((round(initial,2)-round(achieved,2))/(round(initial,2)-round(target,2)))*100 end where 
+vital in ('body_weight','bmi','bmr','visceral_fat','muscle','moisture','body_age','fat');
+update final_quarter set performance=case when total_count <> 0.00 then ((normal_count)/(total_count))*100 else 0 end where
+vital in ('sys','dia','heart_rate');
+update final_quarter set performance=case when total_count <> 0.00 then ((normal_count)/(total_count))*100 else 0 end where
+vital ='steps';
+update final_quarter set performance=case when target <> 0.00 then ((target-achieved)/(target))*100 else 0 end where
+vital in ('HDL_Cholesterol','Total_Cholesterol','LDL_Cholesterol','HBA1C','WHR','Triglycerides');
+
+
+end;
+$$ LANGUAGE plpgsql;
+
+--select * from final_quarter where user_id = 411 and quarter = 2

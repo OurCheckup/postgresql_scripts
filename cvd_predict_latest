@@ -1,0 +1,85 @@
+--select * from ascvd where user_id = 411
+--select * from op where user_id = 411
+--update op set predict =0.00,cvd_predict = 0.00
+
+create OR REPLACE FUNCTION cvd_predict()
+RETURNS void as $$ 
+Begin
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;	
+update op set predict=
+17.1141*(select enter_value from ascvd where names='lnage'and user_id=userid group by enter_value)+
+ 0.9396*(select enter_value from ascvd where names='lntot'and user_id=userid group by enter_value)+
+ -18.9196*(select enter_value from ascvd where names='lnhdl'and user_id=userid group by enter_value)+
+ 4.4748*(select enter_value from ascvd where names ='agehdl'and user_id=userid group by enter_value)+
+ 29.2907*(select enter_value from ascvd where names='trlnsbp'and user_id=userid group by enter_value)+
+ -6.4321*(select enter_value from ascvd where names='agetsbp'and user_id=userid group by enter_value)+
+ 27.8197*(select enter_value from ascvd where names='ntrlnsbp'and user_id=userid group by enter_value)+
+ -6.0873*(select enter_value from ascvd where names='agentsbp'and user_id=userid group by enter_value)+
+ 0.6908*(select yn from cvd_sample1 where risk_factor='smoker'and user_id=userid group by yn)+
+ 0.8738*(select yn from cvd_sample1 where risk_factor='diabetes'and user_id=userid group by yn)
+ where names='AA_Women'and user_id=userid;
+ 
+ update op set predict=
+-29.799*(select enter_value from ascvd where names='lnage'and user_id=userid group by enter_value)+
+4.884*(select enter_value from ascvd where names='age2'and user_id=userid group by enter_value)+
+13.54*(select enter_value from ascvd where names='lntot'and user_id=userid group by enter_value)+
+-3.114*(select enter_value from ascvd where names='agetc'and user_id=userid group by enter_value)+
+-13.578*(select enter_value from ascvd where names='lnhdl'and user_id=userid group by enter_value)+
+3.149*(select enter_value from ascvd where names='agehdl'and user_id=userid group by enter_value)+
+2.019*(select enter_value from ascvd where names='trlnsbp'and user_id=userid group by enter_value)+
+1.957*(select enter_value from ascvd where names='ntrlnsbp'and user_id=userid group by enter_value)+
+7.574*(select yn from cvd_sample1 where risk_factor='smoker'and user_id=userid group by yn) +
+-1.665*(select enter_value from ascvd where names='agesmoke'and user_id=userid group by enter_value)+
+0.661*(select yn from cvd_sample1 where risk_factor='diabetes'and user_id=userid group by yn)
+ where names='WH_Women'and user_id=userid;
+ 
+ update op set predict=
+2.469*(select enter_value from ascvd where names='lnage'and user_id=userid group by enter_value)
++0.302*(select enter_value from ascvd where names='lntot'and user_id=userid group by enter_value)+
+-0.307*(select enter_value from ascvd where names='lnhdl'and user_id=userid group by enter_value)+
+1.916*(select enter_value from ascvd where names='trlnsbp'and user_id=userid group by enter_value)+
+1.809*(select enter_value from ascvd where names='ntrlnsbp'and user_id=userid group by enter_value)+
+0.549*(select yn from cvd_sample1 where risk_factor='smoker'and user_id=userid group by yn)+
+0.645*(select yn from cvd_sample1 where risk_factor='diabetes'and user_id=userid group by yn)
+ where names='AA_men'and user_id=userid;
+ 
+ 
+ update op set predict=
+12.344*(select enter_value from ascvd where names='lnage'and user_id=userid group by enter_value)+
+ 11.853*(select enter_value from ascvd where names='lntot'and user_id=userid group by enter_value)+
+ -2.664*(select enter_value from ascvd where names='agetc'and user_id=userid group by enter_value)+
+ -7.99*(select enter_value from ascvd where names='lnhdl'and user_id=userid group by enter_value)+
+ 1.769*(select enter_value from ascvd where names = 'agehdl'and user_id=userid group by enter_value)+
+ 1.797*(select enter_value from ascvd where names='trlnsbp'and user_id=userid group by enter_value)+
+ 1.764*(select enter_value from ascvd where names='ntrlnsbp'and user_id=userid  group by enter_value)+
+ 7.837*(select yn from cvd_sample1 where risk_factor='smoker'and user_id=userid group by yn)+
+ -1.795*(select enter_value from ascvd where names='agesmoke'and user_id=userid group by enter_value)+
+ 0.658*(select yn from cvd_sample1 where risk_factor='diabetes'and user_id=userid group by yn)
+ where names='WH_men'and user_id=userid;
+			  
+ update op set cvd_predict=1-(0.95334^(EXP(predict-86.6081)))
+ where names='AA_Women'and user_id=userid;
+ update op set cvd_predict=1-(0.96652^(EXP(predict-(-29.1817))))
+ where names='WH_Women'and user_id=userid;
+ update op set cvd_predict=1-(0.89536^(EXP(predict-19.5425)))
+ where names='AA_men'and user_id=userid;
+ update op set cvd_predict=1-(0.91436^(EXP(predict-61.1816)))
+ where names='WH_men' and user_id=userid	;
+loop1 :=loop1+1;
+end LOOP;
+end;
+
+END;
+$$ LANGUAGE plpgsql;
+--select cvd_predict();													   
+												   
+
+

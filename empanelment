@@ -1,0 +1,39 @@
+select * from billing_info
+
+select * from subscription_info
+
+create table Empanelement_Application(First_name character varying(100),Last_Name character varying(100),
+									  National_ID character varying(100 ),Date_Of_Birth  date,
+									  Gender  Character varying(25),Medical_Registration_Number character varying(100),
+									  Year_of_Registration date,Clicnic_Type character varying(100),
+									  SpecialiZation character varying(100),Name_of_clinic character varying(100),
+									  Hospital_License_no character varying(100),Year_Of_Registration2 character varying(100),
+									  Address_of_clinic1 character varying(100),Address2 character varying(100)
+									  ,postcode character varying(25),state character varying(100),Country character varying(100),
+									  Phone_no character varying(25),Mobile_no character varying(25),Email_Address character varying(1000),
+									  Academic_and_medical_qualifications character varying(1000),
+									  Current_Annual_Practising_Certificate character varying(1000),
+									  Current_Indemnity_insurence character varying(1000),
+									  status character varying(100))
+															   
+insert into Empanelement_Application values('Guru','babu',
+									 '23456','2019-09-07' ,
+									  'Male','A!A@#$' ,
+									  '2019-09-08','Specialist',
+									  'Cardialogy','IHEAL MEDICAL CENTRE' ,
+									  'A123456' ,'2019-09-03' ,
+									 'Malysia' ,'Malysia' ,
+									  '123456' ,'Malysia','guei',
+									 '489y5558945','8757484578745','https://accounts.google.com/ServiceLogin/signinchooser?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin',
+									  'https://accounts.google.com/ServiceLogin/signinchooser?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin' ,
+									  'https://accounts.google.com/ServiceLogin/signinchooser?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin' ,
+									  'https://accounts.google.com/ServiceLogin/signinchooser?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin' ,
+									  '0' )															   
+															   
+select * from Empanelement_Application
+	drop  table  M_Clinic_Type														   
+select * from 	 M_Clinic_Type														   
+create table M_Clinic_Type(CLinic_TYPe character varying(100) )
+														insert into M_Clinic_Type values('Specialist')	   
+															   
+														

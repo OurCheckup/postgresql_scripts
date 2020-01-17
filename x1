@@ -1,0 +1,74 @@
+select * from x1 public."Quaterly_Final" where user_id = 411 and quarter = 1 and steps is not null order by steps desc
+create table x1 as
+select sys ,dia,user_id
+from public."Quaterly_Final" group by date ,sys,dia ,user_id,quarter
+having min(date) =min(date)   and user_id=411 and quarter = 1 and sys is not null and dia is not null  limit 1
+
+create table x2 as
+select body_weight,bmi,skeleton,fat,muscle,moisture,visceral_fat,bmr,bodyage,user_id
+ from public."Quaterly_Final" group by date ,body_weight ,bmi,skeleton,fat,muscle,moisture,visceral_fat,bmr,bodyage,user_id,quarter
+ having min(date) =min(date)   and user_id=411 and quarter = 1 and  body_weight is not null and bmi is not null and skeleton is not null and fat is not null and muscle is not null and moisture is not null and visceral_fat is not null and bmr is not null and bodyage is not null  limit 1
+ 
+ create table x3 as
+ select heart_rate,user_id
+ from public."Quaterly_Final" group by date ,heart_rate ,user_id,quarter
+ having min(date) =min(date)   and user_id=411 and quarter = 1 and  heart_rate is not null limit 1
+  
+  select sum(steps),user_id
+ from public."Quaterly_Final" group by user_id,quarter
+ having min(date) =min(date)   and user_id=411 and quarter = 1 and  steps is not null 
+ 
+ create table x4 as
+select date,sys ,dia,user_id
+from public."Quaterly_Final" group by date ,sys,dia ,user_id,quarter
+having date =max(date) and  user_id=411 and quarter = 1 and sys is not null and dia is not null  order by date desc limit 1
+
+create table x5 as
+select  body_weight,bmi,skeleton,fat,muscle,moisture,visceral_fat,bmr,bodyage,user_id
+ from public."Quaterly_Final" group by date ,body_weight ,bmi,skeleton,fat,muscle,moisture,visceral_fat,bmr,bodyage,user_id,quarter
+ having max(date) =max(date)   and user_id=411 and quarter = 1 and  body_weight is not null and bmi is not null and skeleton is not null and fat is not null and muscle is not null and moisture is not null and visceral_fat is not null and 
+ bmr is not null and bodyage is not null  order by date desc limit 1
+ 
+ create table x6 as
+ select heart_rate,user_id
+ from public."Quaterly_Final" group by date ,heart_rate ,user_id,quarter
+ having max(date) =max(date)   and user_id=411 and quarter = 1 and  heart_rate is not null order by date desc limit 1
+ 
+ 
+create table x7 as
+SELECT count(sys)  FROM public."Quaterly_Final"  where   quarter=1 and user_id = 411 and sys is not null  
+
+create table x15 as
+SELECT count(dia)  FROM public."Quaterly_Final"  where   quarter=1 and user_id = 411 and dia is not null 
+
+create table x16 as
+SELECT count(steps)  FROM public."Quaterly_Final"  where   quarter=1 and user_id = 411 and steps is not null     
+
+
+
+
+create table x8  as
+select count(body_weight) from public."Quaterly_Final" where quarter=1 and user_id = 411 and body_weight is not null
+ 
+ create table x9 as
+ select count(heart_rate) from public."Quaterly_Final" where quarter = 1 and user_id = 411 and  heart_rate is not null
+ 
+ 
+ 
+ 
+ create table x10 as
+ SELECT count(dia) FROM public."Quaterly_Final"  where  quarter=1 and dia is not null and dia<>0   and dia >=60 and dia<=90   and user_id = 411  
+
+create table x11 as
+SELECT count(sys) FROM public."Quaterly_Final"  where  quarter=1 and sys is not null and sys<>0   and sys >=60 and sys<=90   and user_id = 411  
+
+create table x12 as
+SELECT count(steps) FROM public."Quaterly_Final"  where  quarter=1 and steps is not null and steps<>0   and steps >=60 and steps<=90   and user_id = 411  
+
+create table x13 as
+SELECT count(body_weight) FROM public."Quaterly_Final"  where  quarter=1 and body_weight is not null and body_weight<>0   and body_weight >=60 and body_weight<=90   and user_id = 411  
+
+create table x14 as
+SELECT count(heart_rate) FROM public."Quaterly_Final"  where  quarter=1 and heart_rate is not null and heart_rate<>0   and heart_rate >=60 and heart_rate<=90   and user_id = 411  
+
+ 

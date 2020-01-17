@@ -1,0 +1,38 @@
+--select bmi()
+-- select * from device_details where user_id = 524  and bmi is not null order by date
+--select * from subscriber_profile where user_id = 524
+CREATE OR REPLACE FUNCTION public.bmi(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$ 
+declare  loop1 integer :=1;
+Declare count1 integer;
+Declare userid integer;
+Declare bmi numeric;
+declare height_1 decimal(10,2);
+begin
+drop table h1;
+create table h1 (id int GENERATED ALWAYS AS IDENTITY,user_id int);
+insert into h1 (user_id)
+select distinct user_id  from device_details; --where device_id='SmartBodyanalyzer_01' and device_details."bmi" is null ; 
+select count (*) into count1 from h1;
+while (loop1<=(count1)) LOOP
+select user_id into userid from h1 where id=loop1;
+			   select height into height_1 from subscriber_profile where  user_id=userid;
+update device_details set bmi = round(body_weight / ((height_1/100)*(height_1/100)))
+ where user_id = userid and device_id='SmartBodyanalyzer_01';
+
+loop1 :=loop1+1;
+end LOOP;
+end;
+			   $BODY$;
+
+ALTER FUNCTION public.bmi()
+    OWNER TO postgres;
+							   
+
+

@@ -1,0 +1,83 @@
+CREATE TRIGGER trigger_update_daily AFTER INSERT ON device_agg_daily1
+    FOR EACH ROW EXECUTE PROCEDURE update_daily();
+
+
+drop trigger trigger_update_daily on device_agg_daily1
+drop function update_daily()
+
+CREATE OR REPLACE FUNCTION update_daily() RETURNS TRIGGER AS $daily_update$
+ 
+ 
+   Declare "med3" varchar(30);
+   Declare "mod3" varchar(30);
+   begin
+   insert into med3 
+select day,user_id,device_id,ROUND(AVG(sys), 2) AS median_sys,
+       ROUND(AVG(dia), 2) AS median_dia,ROUND(AVG(pul), 2) AS median_pul,ROUND(AVG(body_weight), 2) AS median_body_weight,ROUND(AVG(bmi), 2) AS median_bmi,
+ROUND(AVG(skeleton), 2) AS median_skeleton,ROUND(AVG(fat), 2) AS median_fat,ROUND(AVG(muscle ), 2) AS median_muscle,ROUND(AVG(visceral_fat ), 2) AS median_visceral_fat,ROUND(AVG(bmr), 2) AS median_bmr,ROUND(AVG(bodyage), 2) AS median_bodyage,ROUND(AVG(moisture), 2) AS median_moisture,ROUND(AVG(heart_rate), 2) AS median_heart_rate,ROUND(AVG(heart_rate_real_time), 2) AS median_heart_rate_real_time,ROUND(AVG(blood_pressure_up), 2) AS median_blood_pressure_up,ROUND(AVG(blood_pressure_down), 2) AS median_blood_pressure_down,ROUND(AVG(blood_oxygen), 2) AS median_blood_oxygen,ROUND(AVG(blood_oxygen_real_time), 2) AS median_blood_oxygen_real_time,ROUND(AVG(ecg), 2) AS median_ecg,ROUND(AVG(steps), 2) AS median_steps,ROUND(AVG(calories_burt), 2) AS median_calories_burt,ROUND(AVG(spo2), 2) AS median_spo2,ROUND(AVG(sleep_minutes), 2) AS median_sleep_minutes,ROUND(AVG(sleep_hours), 2) AS median_sleep_hours,ROUND(AVG(deep_sleep), 2) AS median_deep_sleep,ROUND(AVG(shallow_sleep), 2) AS median_shallow_sleep
+     FROM (SELECT day,user_id,device_id,sys,dia,pul,body_weight,bmi,skeleton,fat,muscle,visceral_fat,bmr,bodyage,moisture,heart_rate,heart_rate_real_time,blood_pressure_up,
+blood_pressure_down,blood_oxygen,blood_oxygen_real_time,ecg,steps,calories_burt,spo2,sleep_minutes,sleep_hours,deep_sleep,shallow_sleep
+	  FROM ( 
+      SELECT day,user_id,device_id,sys,dia,pul,body_weight,bmi,skeleton,fat,muscle,visceral_fat,bmr,bodyage,moisture,heart_rate,heart_rate_real_time,blood_pressure_up,
+blood_pressure_down,blood_oxygen,blood_oxygen_real_time,ecg,steps,calories_burt,spo2,sleep_minutes,sleep_hours,deep_sleep,shallow_sleep,
+          COUNT(*)
+ OVER(Partition BY user_id,device_id) AS row_count1,
+	     
+                   ROW_NUMBER() OVER(Partition BY user_id,device_id ) AS row_number1
+
+           
+ FROM public."device_agg_daily1" WHERE  
+ sys  <> 0 or dia <> 0 or pul <> 0 or body_weight <> 0 or bmi <> 0 or skeleton <> 0 or fat <> 0 or muscle <> 0 or visceral_fat <> 0 or bmr <>0 or bodyage <>0 or moisture<>0 or heart_rate<>0 or heart_rate_real_time <> 0 or blood_pressure_up <>0
+ or blood_pressure_down <> 0 or blood_oxygen <> 0 or blood_oxygen_real_time <> 0 or ecg <> 0 or steps <> 0 or calories_burt <> 0 or spo2 <> 0 or sleep_minutes<> 0 or sleep_hours <> 0 or deep_sleep <> 0 or shallow_sleep <> 0 
+		  group by day,user_id,device_id,sys,dia,pul,body_weight,bmi,skeleton,fat,muscle,visceral_fat,bmr,bodyage,moisture,heart_rate,heart_rate_real_time,blood_pressure_up,
+blood_pressure_down,blood_oxygen,blood_oxygen_real_time,ecg,steps,calories_burt,spo2,sleep_minutes,sleep_hours,deep_sleep,shallow_sleep
+  ) x
+
+--WHERE row_number1 IN ((row_count1 + 1)/2, (row_count1 + 2)/2)                                  
+      
+
+		group by day,user_id,device_id,sys,dia,pul,body_weight,bmi,skeleton,fat,muscle,visceral_fat,bmr,bodyage,moisture,heart_rate,heart_rate_real_time,blood_pressure_up,
+blood_pressure_down,blood_oxygen,blood_oxygen_real_time,ecg,steps,calories_burt,spo2,sleep_minutes,sleep_hours,deep_sleep,shallow_sleep
+)  y 	
+group by day,user_id,device_id;
+
+
+--delete from mod3
+insert into mod3 
+SELECT user_id,device_id,day,
+		
+		MODE() WITHIN GROUP (ORDER BY sys) AS mode_sys,
+        MODE() WITHIN GROUP (ORDER BY dia) AS mode_dia,
+		MODE() WITHIN GROUP (ORDER BY pul) AS mode_pul,
+		MODE() WITHIN GROUP (ORDER BY body_weight) AS mode_body_weight,
+		MODE() WITHIN GROUP (ORDER BY bmi) AS mode_bmi,
+		MODE() WITHIN GROUP (ORDER BY skeleton) AS mode_skeleton,
+		MODE() WITHIN GROUP (ORDER BY fat) AS mode_fat,
+		MODE() WITHIN GROUP (ORDER BY muscle) AS mode_muscle,
+		MODE() WITHIN GROUP (ORDER BY moisture) AS mode_moisture,
+		MODE() WITHIN GROUP (ORDER BY visceral_fat) AS mode_visceral_fat,
+		MODE() WITHIN GROUP (ORDER BY bmr) AS mode_bmr,
+		MODE() WITHIN GROUP (ORDER BY bodyage) AS mode_bodyage,
+		MODE() WITHIN GROUP (ORDER BY heart_rate) AS mode_heart_rate,
+		MODE() WITHIN GROUP (ORDER BY heart_rate_real_time) AS mode_heart_rate_real_time,
+		
+		MODE() WITHIN GROUP (ORDER BY blood_pressure_up) AS mode_blood_pressure_up,
+        MODE() WITHIN GROUP (ORDER BY blood_pressure_down) AS mode_blood_pressure_down,
+		MODE() WITHIN GROUP (ORDER BY blood_oxygen) AS mode_blood_oxygen,
+		MODE() WITHIN GROUP (ORDER BY blood_oxygen_real_time) AS mode_blood_oxygen_real_time,
+		MODE() WITHIN GROUP (ORDER BY ecg) AS mode_ecg,
+		MODE() WITHIN GROUP (ORDER BY steps) AS mode_steps,
+		MODE() WITHIN GROUP (ORDER BY calories_burt) AS mode_calories_burt,
+		MODE() WITHIN GROUP (ORDER BY spo2) AS mode_spo2,
+		MODE() WITHIN GROUP (ORDER BY sleep_minutes) AS mode_sleep_minutes,
+		MODE() WITHIN GROUP (ORDER BY sleep_hours) AS mode_sleep_hours,
+		MODE() WITHIN GROUP (ORDER BY deep_sleep) AS mode_deep_sleep,
+		MODE() WITHIN GROUP (ORDER BY shallow_sleep) AS mode_shallow_sleep
+		
+		 FROM public."device_agg_daily1"  where  sys  <> 0 or dia <> 0 or pul <> 0 or body_weight <> 0 or bmi <> 0 or skeleton <> 0 or fat <> 0 or muscle <> 0 or visceral_fat <> 0 or bmr <>0 or bodyage <>0 or moisture<>0 or heart_rate<>0 or heart_rate_real_time <> 0 or blood_pressure_up <>0
+ or blood_pressure_down <> 0 or blood_oxygen <> 0 or blood_oxygen_real_time <> 0 or ecg <> 0 or steps <> 0 or calories_burt <> 0 or spo2 <> 0 or sleep_minutes<> 0 or sleep_hours <> 0 or deep_sleep <> 0 or shallow_sleep <> 0 
+ group by user_id,device_id,day;
+  RETURN NEW;
+      END;
+      $daily_update$
+ LANGUAGE plpgsql

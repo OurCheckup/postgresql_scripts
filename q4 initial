@@ -1,0 +1,42 @@
+--select * from y2 where user_id = 411
+
+--update final_quarter
+--update final_quarter set target = 5 where user_id = 411 and quarter = 2 and vital= 'sys';
+
+
+--select * from final_quarter where user_id = 411 and quarter = 2
+-- select q4initial()
+CREATE OR REPLACE FUNCTION public.q4initial(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+DECLARE achieved_1 numeric(10,2);
+DECLARE  vital_1 character varying(30);
+begin
+drop table q4in;
+create table q4in (id int GENERATED ALWAYS AS IDENTITY,user_id int,vital character varying(30));
+insert into q4in (user_id,vital)
+select distinct user_id,vital  from final_quarter where quarter =3; 
+select count (*) into count1 from q4in;
+while (loop1<=(count1)) LOOP
+select user_id into userid from q4in where id=loop1;
+select vital into vital_1 from q4in where id=loop1;
+			   select acheived into achieved_1 from final_quarter where user_id = userid and vital= vital_1 and quarter = 3;
+			   update final_quarter set initial = achieved_1 where user_id = userid and quarter = 4 and vital= vital_1;
+loop1 :=loop1+1;
+end LOOP;
+end;
+			   $BODY$;
+
+ALTER FUNCTION public.q3initial()
+    OWNER TO postgres;
+
+			   
+			   

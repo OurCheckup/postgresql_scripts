@@ -1,0 +1,70 @@
+--select * from claim_module
+--delete from claim_module
+--select * from intt1
+--select claim_moduleNew()
+
+--update claim_module set paid='0'
+--select * from claim_module 
+				 
+				 
+CREATE OR REPLACE FUNCTION public.claim_moduleNew(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   
+   DECLARE count67 integer;
+   DECLARE date_1 date;
+   DECLARE mrn_1 character varying(200);
+   DECLARE userid integer;
+   DECLARE firstname_1 character varying(200);
+   DECLARE purpose_1 character varying(200);
+DECLARE loop78 integer:=1; 
+Begin   
+--select * from intt1
+drop table intt1;
+create table intt1(id  serial,user_id integer,first_name character varying(200), 
+				   mrn character varying(30),date date,purpose character varying(200));
+insert into intt1(date,user_id,first_name,mrn,purpose)
+select distinct DATE(w.Requested_date) as d,w.doctor_id::integer,m.first_name,m.mrn,
+extract(quarter from w.Requested_date)::character varying(200)  || 'th Quarter Review'   from claimed_Request as w
+inner  join subscriber_profile as m  on w.subscriber_id=m.user_id where mrn is not null and mrn <> '0' and status='1'
+group by w.doctor_id,m.first_name,m.mrn,extract(quarter from w.Requested_date),DATE(w.Requested_date) ; 
+
+
+select count (*) into count67 from intt1;
+
+while (loop78<=(count67)) LOOP
+select mrn into mrn_1 from intt1 where id=loop78;
+select date into date_1 from intt1 where id=loop78;
+select user_id into userid from intt1 where id=loop78;
+select purpose into purpose_1 from intt1 where id=loop78;
+select first_name into firstname_1 from intt1 where id=loop78;
+				
+				
+  if not  exists (select * from claim_module where date=date_1 and user_id=userid and subscriber=firstname_1 and mrn=mrn_1 and purpos=purpose_1 ) then
+insert into claim_module (date,user_id,subscriber,mrn,purpos,charge,paid,patient)
+				
+				
+				
+select   DATE(w.Requested_date) as d,w.doctor_id::integer,m.first_name,m.mrn,extract(quarter from w.Requested_date)::character varying(200) 
+|| 'th Quarter Review' as purpos,'80' as charge ,'0' as paid,m.first_name  from claimed_Request as w
+inner  join subscriber_profile as m  on w.subscriber_id=m.user_id  where  DATE(w.Requested_date)=date_1  
+and w.doctor_id::integer=userid
+and m.first_name=firstname_1 and m.mrn=mrn_1 
+and mrn is not null and mrn <> '0' group by w.doctor_id,m.first_name,m.mrn
+,extract(quarter from w.Requested_date),purpos, DATE(w.Requested_date);
+								 
+ 
+end if;
+loop78 :=loop78+1;
+end loop;
+								  update claim_module set status='New' where invoice_no  is  null;
+end;
+ $BODY$;
+
+ALTER FUNCTION public.claim_moduleNew()
+    OWNER TO postgres;

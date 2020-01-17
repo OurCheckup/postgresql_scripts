@@ -1,0 +1,65 @@
+
+--select stepsjob()
+CREATE OR REPLACE FUNCTION stepsjob()
+   RETURNS void as $$
+	DECLARE "steps2" varchar(30); 
+	DECLARE "device_agg_wsteps" varchar(30);
+	DECLARE "device_agg_wsteps1" varchar(30); 
+	DECLARE "device_agg_msteps" varchar(30);
+	DECLARE "device_agg_msteps1" varchar(30); 	
+BEGIN
+drop table steps2;
+create table steps2 As 
+select user_id,device_id,
+round(sum(steps))  as steps, date(date) as date from device_details group by user_id,device_id,date(date);
+--week
+drop table  public."device_agg_wsteps" ;		  		
+CREATE TABLE public."device_agg_wsteps" AS			 
+SELECT user_id,
+device_id ,
+steps ,concat(extract(week from date),'-',extract(year from date))as week from steps2 ;
+----weekly
+drop table  public."device_agg_wsteps1" ;
+CREATE TABLE public."device_agg_wsteps1" AS
+select
+ device_id,user_id,
+   week                        as week
+ , round(sum(steps))                     as steps
+ ,round(sum(steps)/7)                     as Avg_steps
+
+,round(min(steps))			as min_steps
+, round(max(steps))      as max_steps
+
+,ROUND(AVG(steps), 2) AS median_steps,
+			MODE() WITHIN GROUP (ORDER BY steps) AS mode_steps
+
+			from public."device_agg_wsteps"
+  GROUP BY week,device_id,user_id;
+			
+-------------monthly
+drop table public."device_agg_msteps";
+CREATE TABLE public."device_agg_msteps" AS			 
+SELECT user_id,
+device_id ,
+steps ,concat(extract(Month from date),'-',extract(year from date))as month from steps2 ;
+----------------------monthly
+drop table public."device_agg_msteps1";
+CREATE TABLE public."device_agg_msteps1" AS
+select
+ device_id,user_id,
+   month                       as month
+ , round(sum(steps))                     as steps
+ ,round(avg(steps))                     as Avg_steps
+
+,round(min(steps))			as min_steps
+, round(max(steps))      as max_steps
+
+,ROUND(AVG(steps), 2) AS median_steps,
+			MODE() WITHIN GROUP (ORDER BY steps) AS mode_steps
+
+			from public."device_agg_msteps"
+  GROUP BY month,device_id,user_id;
+			END;
+$$ LANGUAGE plpgsql;
+			 
+			

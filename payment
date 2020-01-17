@@ -1,0 +1,31 @@
+select * from Subscription_Info
+
+select * from billing_info
+
+select * from doctor_profile
+
+select * from subscriber_profile
+
+
+create table Billing_info(user_id int,subscriber_name character varying(100),
+						  Address character varying(100),subscriber_type  character varying(100),
+						  subscriber_duration character varying(100),subscriber_period character varying(100),
+						  total_amount integer,invoice_no character varying(100),Account_no character varying(100),
+						  Billing_date date,tax integer,doctor_id integer,doctor_name character varying(100) )
+						  
+						  
+	select 	w.first_name,w.last_name,w.email_user_id,w.national_id,w.dob,w.gender,w.address,w.address_2,
+	w.postcode,w.state,w.country,w.phone_no,w.mobile_no,w.Fax_no,w.user_id,w.doctor_id,w.mrn,m.first_name,m.address_of_clinic_1,m.address_2,m.phone_no			  
+						  from subscriber_profile  as w
+inner  join Doctor_profile as m  on w.doctor_id=m.user_id::character varying(100)  where w.user_id is not null and w.mrn is not null and w.mrn <> '0'
+group by w.user_id,w.first_name,w.last_name,w.email_user_id,w.national_id,w.dob,w.gender,w.address,w.address_2,
+	w.postcode,w.state,w.country,w.phone_no,w.mobile_no,w.Fax_no,w.doctor_id,w.mrn,m.first_name,m.address_of_clinic_1,m.address_2,m.phone_no		;  
+
+drop table Subscription_Info
+create table Subscription_Info(
+company_name character varying(100), subscription_type character varying(100),subscription_duration character varying(100),amount integer)
+select * from Subscription_Info
+insert into Subscription_Info values('iHEAL Medical Centre', 'Individual','One(1) Year',1300),
+('iHEAL Medical Centre', 'Individual','Two(2) Year',2400),
+('iHEAL Medical Centre', 'Couple','One=(1) Year',2270),
+('iHEAL Medical Centre', 'Couple','Two(2) Year',4200)

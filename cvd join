@@ -1,0 +1,21 @@
+--select user_id,race,treatement_for_high_blood_pressure,diabetes,smoker from subscriber_profile where user_id = 477
+--select * from cvd_sample
+--select * from op where user_id = 394
+--select * from final_quarter where quarter =1 and user_id = 411
+--update Initial_3 set initial =70.00 where vital = 'HDL_Cholesterol' and quarter =1
+--select age,gender,user_id from medical_summary where user_id = 477
+--update medical_summary set age = 49 where user_id = 
+--select user_id,vital,initial from final_quarter where vital in ('sys','HDL_Cholesterol','LDL_Cholesterol','Total_Cholesterol') and user_id = 411
+--select * from final_quarter where user_id = 411 and quarter = 1
+--select cvd_join()
+create OR REPLACE FUNCTION cvd_join()
+RETURNS void as $$ 
+Begin
+drop table cvd_sample;
+create table cvd_sample as
+select  s.user_id,s.race,s.treatement_for_high_blood_pressure,s.diabetes,s.smoker,f.vital,f.initial,m.age,m.gender as sex  from subscriber_profile s full outer join
+initial_3 f on s.user_id=f.user_id full outer join medical_summary m on s.user_id=m.user_id where f.vital in ('sys','HDL_Cholesterol','LDL_Cholesterol','Total_Cholesterol')
+group by s.user_id,s.race,s.treatement_for_high_blood_pressure,s.diabetes,s.smoker,f.vital,f.initial,m.age,m.gender;
+END;
+$$ LANGUAGE plpgsql;
+

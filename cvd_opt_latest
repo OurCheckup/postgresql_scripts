@@ -1,0 +1,99 @@
+--optimal
+--select * from ascvd where user_id = 411
+--SELECT * FROM ascvd where user_id = 411
+--select * from cvd_latest
+--SELECT * FROM cvd_sample1
+--select * from cvd_sample1 where risk_factor='treatement_for_high_blood_pressure' and user_id=411 group by optimal_values limit 1)
+
+--select cvd_opt()
+create OR REPLACE FUNCTION cvd_opt()
+RETURNS void as $$ 
+Begin
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;	
+
+update ascvd set optimal=
+(select ln(values::decimal(15,9)) from cvd_sample1 where risk_factor='age'and user_id=userid group by values limit 1)
+where names='lnage' and user_id=userid;
+
+update ascvd set optimal=
+(select ln(optimal_values::decimal(15,9)) from cvd_sample1 where risk_factor='Total_Cholesterol'and user_id=userid group by optimal_values limit 1)
+where names='lntot' and user_id=userid;
+
+update ascvd set optimal=
+(select ln(optimal_values::decimal(15,9)) from cvd_sample1 where risk_factor='HDL_Cholesterol'and user_id=userid
+								   group by optimal_values limit 1)
+where names='lnhdl' and user_id=userid;
+
+
+update ascvd set optimal=
+(select ln(optimal_values::decimal(15,9))*yn from cvd_sample1 where risk_factor='sys'and user_id=userid group by optimal_values,yn limit 1)
+where names='trlnsbp' and user_id=userid;
+
+update ascvd set optimal=
+(select ln(optimal_values::decimal(15,9)) from cvd_sample1 where risk_factor='sys'and user_id=userid group by optimal_values limit 1)*
+(select yn from cvd_sample1 where risk_factor='treatement_for_high_blood_pressure' and user_id=userid group by yn limit 1)
+where names='ntrlnsbp' and user_id=userid;
+
+update ascvd set optimal=
+(select ln(values::decimal(15,9))* ln(values::decimal(15,9)) from cvd_sample1 where risk_factor='age'and user_id=userid group by values limit 1)
+where names='age2' and user_id=userid;
+
+update ascvd set optimal=
+(select ln(values::decimal(15,9)) from cvd_sample1 where risk_factor='age'and user_id=userid group by values,user_id limit 1)*
+(select ln(optimal_values::decimal(15,9)) from cvd_sample1 where risk_factor='HDL_Cholesterol'and user_id=userid
+group by optimal_values,user_id limit 1)
+where names='agehdl' and user_id=userid;
+									  
+
+
+update ascvd set optimal=
+(select ln(values::decimal(15,9)) from cvd_sample1 where risk_factor='age'and user_id=userid group by values,user_id limit 1)*
+(select ln(optimal_values::decimal(15,9)) from cvd_sample1 where risk_factor='Total_Cholesterol'and user_id=userid
+group by optimal_values,user_id limit 1)
+where names='agetc' and user_id=userid;
+
+
+
+
+update ascvd set optimal=
+(select ln(values::decimal(15,9)) from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*0
+--(select ln(optimal_values::decimal(15,9)) from cvd_sample1 where risk_factor='sys')--*
+--(select yn from cvd_sample1 where risk_factor='treatment_for_high_blood_pressure'and user_id=userid group by values )
+where names='agetsbp' and user_id=userid;
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end 
+																					from cvd_sample1 where risk_factor='age'
+																					and user_id=userid
+																					group by values,user_id limit 1) *
+(select ln(optimal_values::decimal(15,9)) from cvd_sample1 where risk_factor='sys'and user_id=userid group by optimal_values limit 1)*
+(select yn from cvd_sample1 where risk_factor='treatement_for_high_blood_pressure' and user_id=userid group by yn limit 1)
+where names='agentsbp' and user_id=userid;
+
+
+update ascvd set optimal=
+(select ln(values::decimal(15,9)) from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*
+(select yn from cvd_sample1 where risk_factor='smoker' and user_id=userid group by yn limit 1)
+where names='agesmoke' and user_id=userid;
+
+update ascvd set optimal=
+(select ln(values::decimal(15,9)) from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*
+(select optimal_values::decimal(15,9)  from cvd_sample1 where risk_factor='diabetes'
+ and user_id=userid group by optimal_values)
+where names='agedm' and user_id=userid;
+loop1 :=loop1+1;
+end LOOP;
+end;
+
+END;
+$$ LANGUAGE plpgsql;
+--select cvd_opt();
+

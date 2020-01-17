@@ -1,0 +1,40 @@
+--daily
+CREATE OR REPLACE FUNCTION dropjob()
+   RETURNS void as $$
+	BEGIN
+drop table public."Daily";
+drop table public."device_agg_daily1";
+drop table public."device_agg_daily";
+
+drop table public."week";
+drop table public."device_agg_weekly1";
+drop table public."device_agg_weekly";
+
+drop table public."Monthly";
+drop table public."device_agg_monthly1";
+drop table public."device_agg_monthly";
+drop table public."yearly";
+drop table public."device_agg_yearly1";
+drop table public."device_agg_yearly";
+
+--quaters
+drop table public."Quaterly";
+drop table public."Quaterly_Final";
+drop table public."Quaterly_Pivot";
+drop table public."final_quarter";
+
+--median&mode
+drop table median;
+drop table mode;
+drop table device_agg_final_weekly;
+drop table med;
+drop table mod;
+drop table device_agg_final_monthly;
+drop table med3;
+drop table mod3;
+drop table device_agg_final_daily;
+END;
+$$ LANGUAGE plpgsql;
+
+
+

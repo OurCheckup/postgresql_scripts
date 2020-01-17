@@ -1,0 +1,124 @@
+--select * from ltr1
+--select distinct user_id into u1 from cvd_sample1  
+--select women,w_values,w_ascvd,men,m_values,m_ascvd,gender,lifetime_risk,user_id into ltr1 from lifetime_risk cross join u1
+create OR REPLACE FUNCTION cvd_life1()
+   RETURNS void as $$
+  BEGIN 
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;	
+
+update ltr1 set w_values=
+ ( select case when   onemajor >=2  then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+
+where women='>=2major' and user_id=userid;
+update ltr1 set w_values=
+ ( select case when   onemajor >=2  then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+
+where women='1major' and user_id=userid;
+
+update ltr1 set w_values=
+ ( select case when   elevated>=1 then 1 else 0 end from ltr where names='sum' and user_id=userid group by elevated)*
+ ( select case when   onemajor=0then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+where women='Elevated' and user_id=userid;
+
+update ltr1 set w_values=
+ ( select case when   not_optimal>=1 then 1 else 0 end from ltr where names='sum' and user_id=userid group by not_optimal)*
+  ( select case when   elevated=0 then 1 else 0 end from ltr where names='sum' and user_id=userid group by elevated)*
+ ( select case when   onemajor=0then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+where women='Not_optimal' and user_id=userid;
+
+update ltr1 set w_values=
+ ( select case when   all_optimal>=1 then 1 else 0 end from ltr where names='sum' and user_id=userid group by all_optimal)*
+ ( select case when   onemajor=0then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+where women='all_optimal' and user_id=userid;
+
+update ltr1 set m_values=
+ ( select case when   onemajor >=2  then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+
+where men='>=2major' and user_id=userid;
+update ltr1 set m_values=
+ ( select case when   onemajor >=2  then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+
+where men='1major' and user_id=userid;
+
+update ltr1 set m_values=
+ ( select case when   elevated>=1 then 1 else 0 end from ltr where names='sum' and user_id=userid group by elevated)*
+ ( select case when   onemajor=0then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+where men='Elevated' and user_id=userid;
+
+update ltr1 set m_values=
+ ( select case when   not_optimal>=1 then 1 else 0 end from ltr where names='sum' and user_id=userid group by not_optimal)*
+  ( select case when   elevated=0 then 1 else 0 end from ltr where names='sum' and user_id=userid group by elevated)*
+ ( select case when   onemajor=0then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+where men='Not_optimal' and user_id=userid;
+
+update ltr1 set m_values=
+ ( select case when   all_optimal>=1 then 1 else 0 end from ltr where names='sum' and user_id=userid group by all_optimal)*
+ ( select case when   onemajor=0then 1 else 0 end from ltr where names='Sumofmajor' and user_id=userid group by onemajor)
+where men='all_optimal' and user_id=userid;
+
+
+
+update ltr1 set w_values=
+ ( select w_values from ltr1 where women='>=2major' and user_id=userid group by w_values )*(select w_ascvd from ltr1 where women='>=2major' and user_id=userid group by w_ascvd)+
+( select w_values from ltr1 where women='1major' and user_id=userid group by w_values)*(select w_ascvd from ltr1 where women='1major' and user_id=userid group by w_ascvd)+
+( select w_values from ltr1 where women='Elevated' and user_id=userid group by w_values)*(select w_ascvd from ltr1 where women='Elevated' and user_id=userid group by w_ascvd)+
+( select w_values from ltr1 where women='Not_optimal' and user_id=userid group by w_values)*(select w_ascvd from ltr1 where women='Not_optimal' and user_id=userid group by w_ascvd)+
+( select w_values from ltr1 where women='all_optimal' and user_id=userid group by w_values)*(select w_ascvd from ltr1 where women='all_optimal' and user_id=userid group by w_ascvd)
+where women='tot_women' and user_id=userid;
+
+update ltr1 set m_values=
+ ( select m_values from ltr1 where women='>=2major' and user_id=userid group by m_values)*(select m_ascvd from ltr1 where women='>=2major' and user_id=userid group by m_ascvd)+
+( select m_values from ltr1 where women='1major' and user_id=userid group by m_values)*(select m_ascvd from ltr1 where women='1major' and user_id=userid group by m_ascvd)+
+( select m_values from ltr1 where women='Elevated' and user_id=userid group by m_values)*(select m_ascvd from ltr1 where women='Elevated' and user_id=userid group by m_ascvd)+
+( select m_values from ltr1 where women='Not_optimal' and user_id=userid group by m_values)*(select m_ascvd from ltr1 where women='Not_optimal' and user_id=userid group by m_ascvd)+
+( select m_values from ltr1 where women='all_optimal' and user_id=userid group by m_values)*(select m_ascvd from ltr1 where women='all_optimal' and user_id=userid group by m_ascvd)
+where men='tot_mem' and user_id=userid;
+
+loop1 :=loop1+1;
+end LOOP;
+end;
+END;
+$$ LANGUAGE plpgsql;
+--select cvd_life1()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

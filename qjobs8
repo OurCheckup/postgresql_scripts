@@ -1,0 +1,42 @@
+--select * from y2 where user_id = 411
+
+--update final_quarter
+--update final_quarter set target = 5 where user_id = 411 and quarter = 2 and vital= 'sys';
+
+
+--select * from final_quarter where user_id = 411 and quarter = 2
+-- select qjobs8()
+CREATE OR REPLACE FUNCTION public.qjobs8(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+DECLARE target_new_1 numeric(10,2);
+DECLARE  vital_1 character varying(30);
+begin
+drop table y3;
+create table y3 (id int GENERATED ALWAYS AS IDENTITY,user_id int,vital character varying(30));
+insert into y3 (user_id,vital)
+select distinct user_id,vital  from final_quarter where quarter =2; 
+select count (*) into count1 from y3;
+while (loop1<=(count1)) LOOP
+select user_id into userid from y3 where id=loop1;
+select vital into vital_1 from y3 where id=loop1;
+			   select target_new into target_new_1 from final_quarter where user_id = userid and vital= vital_1 and quarter = 2;
+			   update final_quarter set target = target_new_1 where user_id = userid and quarter = 3 and vital= vital_1;
+loop1 :=loop1+1;
+end LOOP;
+end;
+			   $BODY$;
+
+ALTER FUNCTION public.qjobs8()
+    OWNER TO postgres;
+
+			   
+			   

@@ -1,0 +1,34 @@
+--select  device_details()
+create OR REPLACE FUNCTION device_details()
+RETURNS void as $$ 
+Begin
+update device_details set sys=null where sys=0;
+update device_details set dia=null where dia=0;
+update device_details set pul=null where pul=0;
+update device_details set body_weight=null where body_weight=0;
+update device_details set bmi=null where bmi=0;
+update device_details set skeleton=null where skeleton=0;
+update device_details set fat=null where fat=0;
+update device_details set muscle=null where muscle=0;
+update device_details set moisture=null where moisture=0;
+update device_details set visceral_fat=null where visceral_fat=0;
+update device_details set bmr=null where bmr=0;
+update device_details set bodyage=null where bodyage=0;
+update device_details set heart_rate=null where heart_rate=0;
+update device_details set heart_rate_real_time=null where heart_rate_real_time=0;
+update device_details set blood_pressure_up=null where blood_pressure_up=0;
+update device_details set blood_pressure_down=null where blood_pressure_down=0;
+update device_details set blood_oxygen_real_time=null where blood_oxygen_real_time=0;
+update device_details set blood_oxygen=null where blood_oxygen=0;
+update device_details set ecg=null where ecg=0;
+update device_details set steps=null where steps=0;
+update device_details set shallow_sleep=null where shallow_sleep=0;
+update device_details set deep_sleep=null where deep_sleep=0;
+update device_details set sleep_hours=null where sleep_hours=0;
+update device_details set sleep_minutes=null where sleep_minutes=0;
+update device_details set spo2=null where spo2=0;
+update device_details set calories_burt=null where calories_burt=0;
+
+END;
+$$ LANGUAGE plpgsql;
+

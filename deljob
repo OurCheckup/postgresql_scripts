@@ -1,0 +1,12 @@
+--select delq();
+--select * from device_agg_final_weekly where user_id = 661
+CREATE OR REPLACE FUNCTION delq()
+   RETURNS void as $$
+
+Begin  
+delete from device_agg_final_monthly;
+delete from device_agg_final_weekly;
+delete from device_agg_final_daily;
+end;
+																	   $$ LANGUAGE plpgsql;
+						

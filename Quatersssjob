@@ -1,0 +1,143 @@
+-- select * from public."Quaterly_Pivot" where vital = 'dia' and user_id = 14
+--select Quarterjobs()
+CREATE OR REPLACE FUNCTION Quarterjobs()
+   RETURNS void as $$
+   DECLARE "Quaterly" varchar(30); 
+   DECLARE "Quaterly_Final" varchar(30); 
+   DECLARE "Quaterly_Pivot" varchar(30); 
+  BEGIN
+	--create Quarterly table   form maib table device_details
+	
+	drop table  public."Quaterly";
+CREATE TABLE public."Quaterly" AS 
+TABLE device_details;
+alter table public."Quaterly" add column WHR int;
+alter table public."Quaterly" add column HBA1C int;
+alter table public."Quaterly" add column HDL_Cholesterol int;
+alter table public."Quaterly" add column LDL_Cholesterol int;
+alter table public."Quaterly" add column Total_Cholesterol int;
+alter table public."Quaterly" add column Triglycerides int;
+--create Quaterly_Final table with Quarterwise from Quaterly table
+drop table public."Quaterly_Final";
+CREATE TABLE public."Quaterly_Final" AS			 
+SELECT id,
+device_id ,
+sys ,
+dia ,
+pul ,
+date date,
+body_weight ,
+bmi ,
+skeleton ,
+fat ,
+muscle ,
+moisture ,
+visceral_fat ,
+bmr ,
+bodyage ,
+heart_rate , 
+heart_rate_real_time ,
+blood_pressure_up ,
+blood_pressure_down ,
+blood_oxygen ,
+blood_oxygen_real_time ,
+ecg ,
+steps ,
+calories_burt ,
+spo2 ,
+sleep_minutes ,
+sleep_hours ,
+deep_sleep ,
+shallow_sleep,user_id,WHR,HBA1C,HDL_Cholesterol,LDL_Cholesterol,Total_Cholesterol,Triglycerides,extract(quarter from date) as quarter,extract(year from date) as year   from  public."Quaterly";
+
+
+
+--create pivot table from the Quaterly_Final
+drop table public."Quaterly_Pivot";
+create table public."Quaterly_Pivot"(vital,values)
+as
+select  'sys',sys,quarter,year,user_id,date   from  public."Quaterly_Final"
+Union all
+select  'dia',dia,quarter,year,user_id,date   from  public."Quaterly_Final"
+Union all
+select  'pul',pul,quarter,year,user_id,date   from  public."Quaterly_Final"
+Union all
+select 'body_weight',body_weight,quarter,year,user_id,date   from  public."Quaterly_Final"
+Union all
+select 'bmi',bmi,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'fat',fat,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'muscle',muscle,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'moisture',moisture,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'visceral_fat',visceral_fat,quarter,year,user_id,date   from  public."Quaterly_Final"
+Union all
+select 'bmr',bmr,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'bodyage',bodyage,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'heart_rate',heart_rate,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'heart_rate_real_time',heart_rate_real_time,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'blood_oxygen',blood_oxygen,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'blood_oxygen_real_time',blood_oxygen_real_time,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'ecg',ecg,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'steps',steps,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'spo2',spo2,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'sleep_minutes',sleep_minutes,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'sleep_hours',sleep_hours,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'deep_sleep',deep_sleep,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'shallow_sleep',shallow_sleep,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'WHR',WHR,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'HBA1C',HBA1C,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'HDL_Cholesterol',HDL_Cholesterol,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'LDL_Cholesterol',LDL_Cholesterol,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'Total_Cholesterol',Total_Cholesterol,quarter,year,user_id,date    from  public."Quaterly_Final"
+Union all
+select 'Triglycerides',Triglycerides,quarter,year,user_id,date   from  public."Quaterly_Final";
+
+alter table public."Quaterly_Pivot" add column Initial BIGINT;
+alter table public."Quaterly_Pivot" add column Target BIGINT;
+alter table public."Quaterly_Pivot" add column Achieved BIGINT ;
+alter table public."Quaterly_Pivot" add column Performance BIGINT;
+alter table public."Quaterly_Pivot" add column Normal_count BIGINT;
+alter table public."Quaterly_Pivot" add column total_count BIGINT;
+alter table public."Quaterly_Pivot" add column target_new BIGINT;
+update public."Quaterly_Pivot" 
+set initial=0,achieved=0,normal_count=0,total_count=0 where quarter=1;
+update public."Quaterly_Pivot" 
+set initial=0,achieved=0,normal_count=0,total_count=0 where quarter=2;
+update public."Quaterly_Pivot" 
+set initial=0,achieved=0,normal_count=0,total_count=0 where quarter=3;
+update public."Quaterly_Pivot" 
+set initial=0,achieved=0,normal_count=0,total_count=0 where quarter=4;
+
+drop table final_quarter;
+CREATE TABLE final_quarter AS
+select vital,quarter,year,user_id,initial,target,achieved,performance,Normal_Count,total_count,target_new from public."Quaterly_Pivot" 
+group by vital,quarter,year,user_id,initial,target,achieved,performance,Normal_Count,total_count,target_new; 
+
+			END;
+$$ LANGUAGE plpgsql;
+						
+						
+
+
+
+

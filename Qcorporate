@@ -1,0 +1,66 @@
+--select public.Qcorpo()
+CREATE OR REPLACE FUNCTION public.Qcorpo(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+begin
+drop table ss1;
+create table ss1 (id int GENERATED ALWAYS AS IDENTITY,user_id int);
+insert into ss1 (user_id)
+select distinct user_id  from public."Quaterly_Final" where quarter = 1;
+select count(*) into count1 from ss1;
+
+while (loop1<=(count1)) LOOP
+			
+select user_id into userid from ss1 where id=loop1;
+
+insert into  Corporate_min
+ 				  
+(select  'sys',sys,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date having min(date)=min(date) and quarter = 1 and user_id = userid and sys is not null order by date desc limit 1) 
+union all
+(select  'dia',dia,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and dia is not null order by date desc limit 1)
+union all
+(select  'bmi',bmi,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and bmi is not null order by date desc limit 1)
+union all
+(select  'fat',fat,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and fat is not null order by date desc limit 1)
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date having min(date)=min(date) and quarter = 1 and user_id = userid and  heart_rate is not null order by date desc limit 1)
+union all
+(select  'steps',steps,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and  steps is not null  order by date desc limit 1);
+
+			   insert into  Corporate_max
+						  
+(select  'sys',sys,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date having max(date)=max(date) and quarter = 1 and user_id = userid and sys is not null order by date asc limit 1) 
+union all
+(select  'dia',dia,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and dia is not null order by date asc limit 1)
+union all
+(select  'bmi',bmi,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and bmi is not null order by date asc limit 1)
+union all
+(select  'fat',fat,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and fat is not null order by date asc limit 1)
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date having max(date)=max(date) and quarter = 1 and user_id = userid and  heart_rate is not null order by date asc limit 1)
+union all
+(select  'steps',steps,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and  steps is not null  order by date asc limit 1);
+
+						   loop1 :=loop1+1;
+end LOOP;
+drop table corporate_min1;
+create table corporate_min1 as
+select vital,values,quarter,year,corporate_min.user_id,date,gender from corporate_min inner join subscriber_profile on corporate_min.user_id = subscriber_profile.user_id;
+drop table corporate_max1;
+create table corporate_max1 as
+select vital,values,quarter,year,corporate_max.user_id,date,gender from corporate_max inner join subscriber_profile on corporate_max.user_id = subscriber_profile.user_id;
+
+end;
+			   $BODY$;
+
+ALTER FUNCTION public.Qcorpo()
+    OWNER TO postgres;
+					

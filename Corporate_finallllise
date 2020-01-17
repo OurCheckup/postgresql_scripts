@@ -1,0 +1,17 @@
+--select Corporatefinal()
+--select * from Corporate_finali
+create OR REPLACE FUNCTION Corporatefinal()
+RETURNS void as $$ 
+Begin
+drop table Corporate_finali;
+create table Corporate_finali as
+select f1.vital,f1.keywords,f1.initial,f2.Actual,
+f3.q2_actual,f4.q3_actual,f5.q4_actual 
+from corporate_intf f1 inner join corporate_Actualf f2 on f1.vital = f2.vital and f1.keywords = f2.keywords
+inner join corporate_Q2Actualf f3 on f2.vital = f3.vital and f2.keywords=f3.keywords
+inner join corporate_Q3Actualf f4 on f3.vital= f4.vital and f3.keywords = f4.keywords
+inner join corporate_Q4Actualf f5 on f4.vital = f5.vital and f4.keywords = f5.keywords group by f1.vital,f1.keywords,f1.initial,f2.Actual,
+f3.q2_actual,f4.q3_actual,f5.q4_actual order by keywords;
+alter table Corporate_finali add column target numeric(15,9);
+END;
+$$ LANGUAGE plpgsql;

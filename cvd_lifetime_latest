@@ -1,0 +1,141 @@
+--select * from lifetime_riskk
+--select distinct user_id into u1 from cvd_sample1  
+--select names,all_optimal,not_optimal,elevated,onemajor,user_id into ltr from lifetime_riskk cross join u1
+create OR REPLACE FUNCTION cvd_life()
+   RETURNS void as $$
+  BEGIN 
+  
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;	
+
+  update ltr set all_optimal=
+ ( select case when   values::int8 < 180 then 1 else 0 end from cvd_sample1 where risk_factor='total_cholesterol' and user_id=userid group by values)
+
+where names='cholesterol' and user_id=userid ;
+
+
+update ltr set all_optimal=
+ ( select case when   values::int8<120 then 1 else 0 end from cvd_sample1 where risk_factor='systolic_blood_pressure' and user_id=userid group by values)*
+ ( select case when   values='N'then 1 else 0 end from cvd_sample1 where risk_factor='treatment_for_high_blood_pressure' and user_id=userid group by values)
+where names='SBP' and user_id=userid ;
+
+update ltr set all_optimal=
+ ( select all_optimal from lifetime_riskk where names='cholesterol' and user_id=userid group by all_optimal)+
+( select all_optimal from lifetime_riskk where names='SBP' and user_id=userid group by all_optimal)
+where names='sum' and user_id=userid;
+
+
+update ltr set not_optimal=
+ ( select case when   values::int8>=180 then 1 else 0 end from cvd_sample1 where risk_factor='total_cholesterol' and user_id=userid group by values)*
+ ( select case when   values::int8<200 then 1 else 0 end from cvd_sample1 where risk_factor='total_cholesterol' and user_id=userid group by values)
+where names='cholesterol' and user_id=userid;
+
+update ltr set not_optimal=
+ ( select case when   values::int8>=120 then 1 else 0 end from cvd_sample1 where risk_factor='systolic_blood_pressure' and user_id=userid group by values)*
+ ( select case when   values::int8<140 then 1 else 0 end from cvd_sample1 where risk_factor='systolic_blood_pressure' and user_id=userid group by values)*
+ (select case when   values='N' then 1 else 0 end from cvd_sample1 where risk_factor='treatment_for_high_blood_pressure' and user_id=userid group by values)
+where names='SBP' and user_id=userid;
+
+update ltr set not_optimal=
+ ( select not_optimal from lifetime_riskk where names='cholesterol' and user_id=userid group by not_optimal)+
+( select not_optimal from lifetime_riskk where names='SBP' and user_id=userid group by not_optimal)
+where names='sum' and user_id=userid;
+
+update ltr set elevated=
+ ( select case when   values::int8>=200 then 1 else 0 end from cvd_sample1 where risk_factor='total_cholesterol' and user_id=userid group by values)*
+ ( select case when   values::int8<240 then 1 else 0 end from cvd_sample1 where risk_factor='total_cholesterol' and user_id=userid group by values)
+where names='cholesterol' and user_id=userid;
+
+update ltr set elevated=
+ ( select case when   values::int8>=140 then 1 else 0 end from cvd_sample1 where risk_factor='systolic_blood_pressure' and user_id=userid group by values)*
+ ( select case when   values::int8<160 then 1 else 0 end from cvd_sample1 where risk_factor='systolic_blood_pressure' and user_id=userid group by values)*
+ (select case when   values='N' then 1 else 0 end from cvd_sample1 where risk_factor='treatment_for_high_blood_pressure' and user_id=userid group by values)
+where names='SBP' and user_id=userid;
+
+
+update ltr set elevated=
+ ( select elevated from lifetime_riskk where names='cholesterol' and user_id=userid group by elevated)+
+( select elevated from lifetime_riskk where names='SBP' and user_id=userid group by elevated)
+where names='sum' and user_id=userid;
+
+
+update ltr set onemajor=
+ ( select case when   values::int8>=240 then 1 else 0 end from cvd_sample1 where risk_factor='total_cholesterol' and user_id=userid group by values)
+
+where names='cholesterol' and user_id=userid;
+
+update ltr set onemajor=
+ ( select case when   values::int8>=160 then 1 else 0 end from cvd_sample1 where risk_factor='systolic_blood_pressure' and user_id=userid group by values)
+where names='SBP' and user_id=userid;
+
+update ltr set onemajor=
+ ( select case when   values='Y' then 1 else 0 end from cvd_sample1 where risk_factor='treatment_for_high_blood_pressure' and user_id=userid group by values)
+where names='treated_or_not' and user_id=userid;
+
+update ltr set onemajor=
+ ( select onemajor from lifetime_riskk where names='cholesterol' and user_id=userid group by onemajor)+
+( select onemajor from lifetime_riskk where names='SBP' and user_id=userid group by onemajor)
+where names='SBP1' and user_id=userid;
+
+update ltr set onemajor=
+ (select case when   values='Y' then 1 else 0 end from cvd_sample1 where risk_factor='smoker' and user_id=userid group by values)
+where names='Smoking' and user_id=userid;
+
+
+update ltr set onemajor=
+ ( select case when   values='Y' then 1 else 0 end from cvd_sample1 where risk_factor='diabetes' and user_id=userid group by values)
+where names='Diabetes' and user_id=userid;
+
+
+update ltr set onemajor=
+ ( select onemajor from ltr where names='cholesterol' and user_id=userid group by onemajor)+
+ ( select onemajor from ltr where names='SBP1' and user_id=userid group by onemajor)+
+ (select onemajor from ltr where names='Smoking' and user_id=userid group by onemajor)+
+ (select onemajor from ltr where names='Diabetes' and user_id=userid group by onemajor)
+where names='Sumofmajor' and user_id=userid;
+
+
+loop1 :=loop1+1;
+end LOOP;
+end;
+END;
+$$ LANGUAGE plpgsql;
+--select cvd_life();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

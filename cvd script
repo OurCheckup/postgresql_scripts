@@ -1,0 +1,51 @@
+--select * from cvd_sample1 where user_id = 411
+
+--select * from cvd_sample1
+--select cvd_join1()
+create OR REPLACE FUNCTION cvd_join1()
+RETURNS void as $$ 
+Begin
+drop table cvd_sample1;
+create table cvd_sample1(risk_factor,Values,user_id,optimal_values,yn)
+as
+select  'race',race,user_id,'',0 from public."cvd_sample" group by race,user_id
+Union all
+select  'treatement_for_high_blood_pressure',treatement_for_high_blood_pressure ,user_id,'',0 from public."cvd_sample" group by treatement_for_high_blood_pressure ,user_id 
+Union all
+select 'diabetes',diabetes,user_id,'',0  from public."cvd_sample" group by diabetes,user_id 
+Union all
+select 'smoker',smoker,user_id,'',0  from public."cvd_sample" group by smoker,user_id
+Union all
+select 'age', age::varchar,user_id,'',0  from public."cvd_sample" group by age,user_id
+Union all
+select 'sex',sex,user_id,'',0  from public."cvd_sample" group by sex,user_id
+Union all
+select vital,initial::varchar,user_id,'',0  from public."cvd_sample" group by vital,initial,user_id; 
+update cvd_sample1
+set optimal_values='No' where risk_factor='smoker' ;
+update cvd_sample1
+set optimal_values='170' where risk_factor='Total_Cholesterol'; 
+update cvd_sample1
+set optimal_values='50' where risk_factor='HDL_Cholesterol'; 
+update cvd_sample1
+set optimal_values='110' where risk_factor='sys' ;
+update cvd_sample1
+set optimal_values='No' where risk_factor='treatment_for_high_blood_pressure';
+update cvd_sample1
+set optimal_values='No' where risk_factor='diabetes';
+update cvd_sample1
+set yn=0 where values='No';
+update cvd_sample1
+set yn=1 where values='Yes';
+update cvd_sample1 set optimal_values=0 where risk_factor='diabetes'
+and optimal_values='No';
+update cvd_sample1 set optimal_values=1 where risk_factor='diabetes'
+and optimal_values='Yes';
+update cvd_sample1 set optimal_values=0 where risk_factor='smoker'
+and optimal_values='No';
+update cvd_sample1 set optimal_values=1 where risk_factor='smoker'
+and optimal_values='Yes';
+END;
+$$ LANGUAGE plpgsql;
+
+

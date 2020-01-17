@@ -1,0 +1,14 @@
+--select * from optimal_values
+--alter table op alter s0_10 type decimal(15,9)
+create OR REPLACE FUNCTION Ten_ascvd()
+RETURNS void as $$ 
+Begin
+drop table op;
+create table op as
+select names,s0_10,mnxb,predict,cvd_predict,opt_predict,opt_cvd_predict,
+sex_race,ten_year_ascvd,opt_ten_year_ascvd,user_id from optimal_values cross join u1 group by names,s0_10,mnxb,predict,cvd_predict,opt_predict,opt_cvd_predict,
+sex_race,ten_year_ascvd,opt_ten_year_ascvd,user_id  ;
+END;
+$$ LANGUAGE plpgsql;
+-- select ten_ascvd();
+--select * from op

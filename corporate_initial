@@ -1,0 +1,103 @@
+--select Corporateinitai()
+create OR REPLACE FUNCTION Corporateinitai()
+RETURNS void as $$ 
+Begin
+drop table Corporate_initial;
+create table Corporate_initial(Keywords,vital,count) as
+select 'heart_rate','% within normal range (60-100)', count (*) from corporate_min1 where vital = 'heart_rate' and values between 60 and 90  
+union all
+select 'Blood_pressure','% normal range', count (*) from corporate_min1 where vital = 'sys' and values between 90 and 130
+union all
+select 'Blood_pressure','% borderline', count (*) from corporate_min1 where vital = 'sys' and values between 130 and 140
+union all
+select 'Blood_pressure','% High', count (*) from corporate_min1 where vital = 'sys' and values between 140 and 160
+union all
+select 'Blood_pressure','% Dangerous Level', count (*) from corporate_min1 where vital = 'sys' and values  >160
+union all
+select 'Blood_pressure','% normal range', count (*) from corporate_min1 where vital = 'dia' and values between 60 and 85
+union all
+select 'Blood_pressure','% borderline', count (*) from corporate_min1 where vital = 'dia' and values between 85 and 90
+union all
+select 'Blood_pressure','% High', count (*) from corporate_min1 where vital = 'dia' and values between 90 and 100
+union all
+select 'Blood_pressure','% Dangerous Level', count (*) from corporate_min1 where vital = 'dia' and values >100
+union all
+select 'Body_Mass_Index','% underweight', count (*) from corporate_min1 where vital = 'bmi' and values < 18.5
+union all
+select 'Body_Mass_Index','% Normal', count (*) from corporate_min1 where vital = 'bmi' and values between 18.5 and 24.9
+union all
+select 'Body_Mass_Index','% Overweight', count (*) from corporate_min1 where vital = 'bmi' and values between 25.0 and 30.0
+union all
+select 'Body_Mass_Index','% Obese', count (*) from corporate_min1 where vital = 'bmi' and values >30
+union all
+select 'Total_Body_Fat','% Fit', count (*) from corporate_min1 where vital = 'fat' and gender = 'Male' and values < 17
+union all
+select 'Total_Body_Fat','% Normal', count (*) from corporate_min1 where vital = 'fat' and gender = 'Male' and values between 18 and 25
+union all
+select 'Total_Body_Fat','% obese', count (*) from corporate_min1 where vital = 'fat' and gender = 'Male' and values > 25
+union all
+select 'Total_Body_Fat','% Fit', count (*) from corporate_min1 where vital = 'fat' and gender = 'Female' and values <24
+union all
+select 'Total_Body_Fat','% Normal', count (*) from corporate_min1 where vital = 'fat' and gender = 'Female' and values between 25 and 31
+union all
+select 'Total_Body_Fat','% obese', count (*) from corporate_min1 where vital = 'fat' and gender = 'Female' and values > 32
+union all
+select 'Average_Steps_Taken','% >= 10000', count (*) from corporate_min1 where vital = 'steps' and values >=10000
+union all
+select 'Average_Steps_Taken','% <= 5000', count (*) from corporate_min1 where vital = 'steps' and values <=5000;
+drop table corporate_total;
+create table corporate_total(Keywords,vital,tot_count) as
+select 'heart_rate','% within normal range (60-100)', count (*) from corporate_min1 where vital = 'heart_rate'  
+union all
+select 'Blood_Pressure','% normal range', count (*) from corporate_min1 where vital = 'sys'
+union all
+select 'Blood_Pressure','% borderline', count (*) from corporate_min1 where vital = 'sys' 
+union all
+select 'Blood_Pressure','% High', count (*) from corporate_min1 where vital = 'sys'
+union all
+select 'Blood_Pressure','% Dangerous Level', count (*) from corporate_min1 where vital = 'sys' 
+union all
+select 'Blood_Pressure','% normal range', count (*) from corporate_min1 where vital = 'dia' 
+union all
+select 'Blood_Pressure','% borderline', count (*) from corporate_min1 where vital = 'dia'
+union all
+select 'Blood_Pressure','% High', count (*) from corporate_min1 where vital = 'dia'
+union all
+select 'Blood_Pressure','% Dangerous Level', count (*) from corporate_min1 where vital = 'dia' 
+union all
+select  'Body_Mass_Index','% underweight', count (*) from corporate_min1 where vital = 'bmi' 
+union all
+select  'Body_Mass_Index','% Normal', count (*) from corporate_min1 where vital = 'bmi' 
+union all
+select  'Body_Mass_Index','% Overweight', count (*) from corporate_min1 where vital = 'bmi' 
+union all
+select  'Body_Mass_Index','% Obese', count (*) from corporate_min1 where vital = 'bmi' 
+union all
+select 'Total_Body_Fat','% Fit', count (*) from corporate_min1 where vital = 'fat' and gender = 'Male' 
+union all
+select 'Total_Body_Fat','% Normal', count (*) from corporate_min1 where vital = 'fat' and gender = 'Male'
+union all
+select 'Total_Body_Fat','% obese', count (*) from corporate_min1 where vital = 'fat' and gender = 'Male'
+union all
+select 'Total_Body_Fat','% Fit', count (*) from corporate_min1 where vital = 'fat' and gender = 'Female' 
+union all
+select 'Total_Body_Fat','% Normal', count (*) from corporate_min1 where vital = 'fat' and gender = 'Female' 
+union all
+select 'Total_Body_Fat','% obese', count (*) from corporate_min1 where vital = 'fat' and gender = 'Female' 
+union all
+select 'Average_Steps_Taken','% >= 10000', count (*) from corporate_min1 where vital = 'steps' 
+union all
+select 'Average_Steps_Taken','% <= 5000', count (*) from corporate_min1 where vital = 'steps';
+drop table Corporate_initial1;
+create table Corporate_initial1 as
+select keywords ,vital,sum(count) as icount from corporate_initial group by keywords,vital order by keywords;
+drop table Corporate_total1;
+create table Corporate_total1 as
+select keywords ,vital,sum(tot_count) as itot_count from corporate_total group by keywords,vital order by keywords;
+drop table corporate_intf;
+create table corporate_intf as
+select corporate_initial1.keywords,corporate_initial1.vital,corporate_initial1.icount,corporate_total1.itot_count,case when corporate_total1.itot_count =  0 then 0 else  (corporate_initial1.icount/corporate_total1.itot_count)*100 end as initial from Corporate_initial1 inner join Corporate_total1  on Corporate_initial1.vital = Corporate_total1.vital
+group by corporate_initial1.keywords,corporate_initial1.vital,corporate_initial1.icount,corporate_total1.itot_count order by corporate_initial1.keywords;
+END;
+$$ LANGUAGE plpgsql;
+

@@ -1,0 +1,391 @@
+--select dailyjob2();
+--select * from public."device_details" where  heart_rate=0
+--delete  from public."device_details" where device_id = 'SmartBand_03' and heart_rate is  
+
+--delete from public."device_agg_yearly" where user_id = 4567
+--select * from public."Daily" where  user_id =477
+--select * from public."device_agg_daily1" where user_id = 477
+--select * from public."device_agg_weekly" where user_id= 411
+--select * from week
+--select * from public."daily" where user_id = 477
+--select * from public."device_agg_weekly" where user_id = 524
+--delete from public."device_agg_monthly1" where user_id =411
+--select distinct user_id from public."device_agg_monthly"
+--select * from public."device_agg_weekly" where user_id =411
+CREATE OR REPLACE FUNCTION dailyjob2()
+   RETURNS void as $$
+	DECLARE "device_agg_daily1" varchar(30); 
+	DECLARE "device_agg_daily" varchar(30);
+	DECLARE "device_agg_weekly1" varchar(30); 
+	DECLARE "device_agg_weely" varchar(30);
+	DECLARE "device_agg_monthly1" varchar(30); 
+	DECLARE "device_agg_monthly" varchar(30);
+	DECLARE "device_agg_yearly1" varchar(30); 
+	DECLARE "device_agg_yearly" varchar(30);
+	
+BEGIN
+--daily
+drop table public."Daily";
+create table public."Daily" As table device_details;
+drop table  public."device_agg_daily1";
+create table  public."device_agg_daily1" As
+select id,
+device_id ,
+sys ,
+dia ,
+pul ,
+date date,
+body_weight ,
+bmi ,
+skeleton ,
+fat ,
+muscle ,
+moisture ,
+visceral_fat ,
+bmr ,
+bodyage ,
+heart_rate , 
+heart_rate_real_time ,
+blood_pressure_up ,
+blood_pressure_down ,
+blood_oxygen ,
+blood_oxygen_real_time ,
+ecg ,
+steps ,
+calories_burt ,
+spo2 ,
+sleep_minutes ,
+sleep_hours ,
+deep_sleep ,
+shallow_sleep,user_id,concat(extract(Day from date),'-',extract(Month from date),'-',extract(year from date)) as Day  from  public."Daily"; 
+drop table public."device_agg_daily";
+create table  public."device_agg_daily" As 																							 
+select
+ device_id,user_id,
+   day                          as day
+ , round(Avg(sys))                     as sys
+ , round(Avg(dia))                      as dia 
+ , round (Avg(pul))                      as pul 
+ , round(Avg(body_weight))             as body_weight 
+ , round(Avg(bmi))                      as bmi 
+ , round(Avg(skeleton))                 as skeleton 
+ , round(Avg(fat))                      as fat 
+ , round(Avg(muscle))                  as muscle 
+ , round(Avg(moisture))                 as moisture 
+ , round(Avg(visceral_fat))             as visceral_fat 
+ , round(Avg(bmr))                     as bmr 
+ , round(Avg(bodyage))                  as bodyage 
+ , round(Avg(heart_rate))               as heart_rate 
+ , round(Avg(heart_rate_real_time))     as heart_rate_real_time 
+ , round(Avg(blood_pressure_up))        as blood_pressure_up 
+ , round(Avg(blood_pressure_down))      as blood_pressure_down 
+ , round(Avg(blood_oxygen))             as blood_oxygen 
+ , round(Avg(blood_oxygen_real_time))   as blood_oxygen_real_time 
+ , round(Avg(ecg))                      as ecg 
+ , round(Avg(steps))                   as steps 
+ , round(Avg(calories_burt))            as calories_burt 
+ , round(Avg(spo2))                    as spo2 
+ , round(Avg(sleep_minutes))            as sleep_minutes 
+ , round(Avg(sleep_hours))              as sleep_hours 
+ , round(Avg(deep_sleep))               as deep_sleep
+ , round(Avg(shallow_sleep))            as shallow_sleep
+ , round(Min(sys))                     as min_sys
+ , round(Min(dia))                      as min_dia 
+ , round (Min(pul))                      as min_pul 
+ , round(Min(body_weight),2)             as min_body_weight
+ , round(Min(bmi))                      as min_bmibmi 
+ , round(Min(skeleton))                 as min_skeleton 
+ , round(Min(fat))                      as min_fat 
+ , round(Min(muscle))                  as min_muscle 
+ , round(Min(moisture))                 as min_moisture 
+ , round(Min(visceral_fat))             as min_visceral_fat 
+ , round(Min(bmr))                     as min_bmr 
+ , round(Min(bodyage))                  as min_bodyage 
+ , round(Min(heart_rate))               as min_heart_rate 
+ , round(Min(heart_rate_real_time))     as min_heart_rate_real_time 
+ , round(Min(blood_pressure_up))        as min_blood_pressure_up 
+ , round(Min(blood_pressure_down))      as min_blood_pressure_down 
+ , round(Min(blood_oxygen))             as min_blood_oxygen 
+ , round(Min(blood_oxygen_real_time))   as min_blood_oxygen_real_time 
+ , round(Min(ecg))                      as min_ecg 
+ , round(Min(steps))                   as min_steps 
+ , round(Min(calories_burt))            as min_calories_burt 
+ , round(Min(spo2))                    as min_spo2 
+ , round(Min(sleep_minutes))            as min_sleep_minutes 
+ , round(Min(sleep_hours))              as min_sleep_hours 
+ , round(Min(deep_sleep))               as min_deep_sleep
+ , round(Min(shallow_sleep))            as min_shallow_sleep
+ , round(max(sys))                     as max_sys
+ , round(max(dia))                      as max_dia 
+ , round (max(pul))                      as max_pul 
+ , round(max(body_weight))             as max_body_weight
+ , round(max(bmi))                      as max_bmi
+ , round(max(skeleton))                 as max_skeleton 
+ , round(max(fat))                      as max_fat 
+ , round(max(muscle))                  as max_muscle 
+ , round(max(moisture))                 as max_moisture 
+ , round(max(visceral_fat))             as max_visceral_fat 
+ , round(max(bmr))                     as max_bmr 
+ , round(max(bodyage))                  as max_bodyage 
+ , round(max(heart_rate))               as max_heart_rate 
+ , round(max(heart_rate_real_time))     as max_heart_rate_real_time 
+ , round(max(blood_pressure_up))        as max_blood_pressure_up 
+ , round(max(blood_pressure_down))      as max_blood_pressure_down 
+ , round(max(blood_oxygen))             as max_blood_oxygen 
+ , round(max(blood_oxygen_real_time))   as max_blood_oxygen_real_time 
+ , round(max(ecg))                      as max_ecg 
+ , round(max(steps))                   as max_steps 
+ , round(max(calories_burt))            as max_calories_burt 
+ , round(max(spo2))                    as max_spo2 
+ , round(max(sleep_minutes))            as max_sleep_minutes 
+ , round(max(sleep_hours))              as max_sleep_hours 
+ , round(max(deep_sleep))               as max_deep_sleep
+ , round(max(shallow_sleep))            as max_shallow_sleep
+  FROM public."device_agg_daily1" 
+ GROUP BY day,device_id,user_id;
+--weekly
+drop table public."week";			 
+create table public."week"  As table device_details;
+
+drop table  public."device_agg_weekly1";
+create table  public."device_agg_weekly1" 	As		 
+SELECT id,
+device_id ,
+sys ,
+dia ,
+pul ,
+date date,
+body_weight ,
+bmi ,
+skeleton ,
+fat ,
+muscle ,
+moisture ,
+visceral_fat ,
+bmr ,
+bodyage ,
+heart_rate , 
+heart_rate_real_time ,
+blood_pressure_up ,
+blood_pressure_down ,
+blood_oxygen ,
+blood_oxygen_real_time ,
+ecg ,
+steps ,
+calories_burt ,
+spo2 ,
+sleep_minutes ,
+sleep_hours ,
+deep_sleep ,
+shallow_sleep,user_id,concat(extract(week from date),'-',extract(year from date))as week  from  public."week";
+drop table public."device_agg_weekly";
+create table public."device_agg_weekly" As						
+select
+ device_id,user_id,
+   week                          as week
+ , round(Avg(sys))                     as sys
+ , round(Avg(dia))                      as dia 
+ , round (Avg(pul))                      as pul 
+ , round(Avg(body_weight))             as body_weight 
+ , round(Avg(bmi))                      as bmi 
+ , round(Avg(skeleton))                 as skeleton 
+ , round(Avg(fat))                      as fat 
+ , round(Avg(muscle))                  as muscle 
+ , round(Avg(moisture))                 as moisture 
+ , round(Avg(visceral_fat))             as visceral_fat 
+ , round(Avg(bmr))                     as bmr 
+ , round(Avg(bodyage))                  as bodyage 
+ , round(Avg(heart_rate))               as heart_rate 
+ , round(Avg(heart_rate_real_time))     as heart_rate_real_time 
+ , round(Avg(blood_pressure_up))        as blood_pressure_up 
+ , round(Avg(blood_pressure_down))      as blood_pressure_down 
+ , round(Avg(blood_oxygen))             as blood_oxygen 
+ , round(Avg(blood_oxygen_real_time))   as blood_oxygen_real_time 
+ , round(Avg(ecg))                      as ecg 
+ , round(sum(steps)/7)                   as steps 
+ , round(Avg(calories_burt))            as calories_burt 
+ , round(Avg(spo2))                    as spo2 
+ , round(Avg(sleep_minutes))            as sleep_minutes 
+ , round(Avg(sleep_hours))              as sleep_hours 
+ , round(Avg(deep_sleep))               as deep_sleep
+ , round(Avg(shallow_sleep))            as shallow_sleep
+ , round(Min(sys),2)                     as min_sys
+ , round(Min(dia),2)                      as min_dia 
+ , round (Min(pul),2)                      as min_pul 
+ , round(Min(body_weight),2)             as min_body_weight
+ , round(Min(bmi),2)                      as min_bmibmi 
+ , round(Min(skeleton),2)                 as min_skeleton 
+ , round(Min(fat),2)                      as min_fat 
+ , round(Min(muscle),2)                  as min_muscle 
+ , round(Min(moisture),2)                 as min_moisture 
+ , round(Min(visceral_fat),2)             as min_visceral_fat 
+ , round(Min(bmr),2)                     as min_bmr 
+ , round(Min(bodyage),2)                  as min_bodyage 
+ , round(Min(heart_rate),2)               as min_heart_rate 
+ , round(Min(heart_rate_real_time),2)     as min_heart_rate_real_time 
+ , round(Min(blood_pressure_up),2)        as min_blood_pressure_up 
+ , round(Min(blood_pressure_down),2)      as min_blood_pressure_down 
+ , round(Min(blood_oxygen),2)             as min_blood_oxygen 
+ , round(Min(blood_oxygen_real_time))   as min_blood_oxygen_real_time 
+ , round(Min(ecg),2)                      as min_ecg 
+ , round(Min(steps))                   as min_steps 
+ , round(Min(calories_burt))            as min_calories_burt 
+ , round(Min(spo2))                    as min_spo2 
+ , round(Min(sleep_minutes),2)            as min_sleep_minutes 
+ , round(Min(sleep_hours))              as min_sleep_hours 
+ , round(Min(deep_sleep))               as min_deep_sleep
+ , round(Min(shallow_sleep))            as min_shallow_sleep
+ , round(max(sys),2)                     as max_sys
+ , round(max(dia),2)                      as max_dia 
+ , round (max(pul),2)                      as max_pul 
+ , round(max(body_weight),2)             as max_body_weight
+ , round(max(bmi),2)                      as max_bmi
+ , round(max(skeleton),2)                 as max_skeleton 
+ , round(max(fat),2)                      as max_fat 
+ , round(max(muscle),2)                  as max_muscle 
+ , round(max(moisture),2)                 as max_moisture 
+ , round(max(visceral_fat),2)             as max_visceral_fat 
+ , round(max(bmr),2)                     as max_bmr 
+ , round(max(bodyage),2)                  as max_bodyage 
+ , round(max(heart_rate),2)               as max_heart_rate 
+ , round(max(heart_rate_real_time),2)     as max_heart_rate_real_time 
+ , round(max(blood_pressure_up))        as max_blood_pressure_up 
+ , round(max(blood_pressure_down))      as max_blood_pressure_down 
+ , round(max(blood_oxygen))             as max_blood_oxygen 
+ , round(max(blood_oxygen_real_time))   as max_blood_oxygen_real_time 
+ , round(max(ecg),2)                      as max_ecg 
+ , round(max(steps))                   as max_steps 
+ , round(max(calories_burt),2)            as max_calories_burt 
+ , round(max(spo2))                    as max_spo2 
+ , round(max(sleep_minutes),2)            as max_sleep_minutes 
+ , round(max(sleep_hours))              as max_sleep_hours 
+ , round(max(deep_sleep))               as max_deep_sleep
+ , round(max(shallow_sleep))            as max_shallow_sleep
+  from public."device_agg_weekly1" 														
+  GROUP BY week,device_id,user_id;
+			
+--monthly
+drop table public."Monthly";
+create table  public."Monthly"  As table device_details;
+drop table public."device_agg_monthly1";
+create table public."device_agg_monthly1"  As			 
+SELECT id,
+device_id ,
+sys ,
+dia ,
+pul ,
+date date,
+body_weight ,
+bmi ,
+skeleton ,
+fat ,
+muscle ,
+moisture ,
+visceral_fat ,
+bmr ,
+bodyage ,
+heart_rate , 
+heart_rate_real_time ,
+blood_pressure_up ,
+blood_pressure_down ,
+blood_oxygen ,
+blood_oxygen_real_time ,
+ecg ,
+steps ,
+calories_burt ,
+spo2 ,
+sleep_minutes ,
+sleep_hours ,
+deep_sleep ,
+shallow_sleep,user_id,concat(extract(month from date),'-',extract(year from date))as Month  from  public."Monthly" ; 
+drop table 	public."device_agg_monthly";															  
+create table  public."device_agg_monthly"  As	
+select
+ device_id,user_id,
+   Month                          as Month
+ , round(Avg(sys),2)                     as sys
+ , round(Avg(dia),2)                      as dia 
+ , round (Avg(pul),2)                      as pul 
+ , round(Avg(body_weight),2)             as body_weight 
+ , round(Avg(bmi))                      as bmi 
+ , round(Avg(skeleton))                 as skeleton 
+ , round(Avg(fat))                      as fat 
+ , round(Avg(muscle)
+ )                  as muscle 
+ , round(Avg(moisture))                 as moisture 
+ , round(Avg(visceral_fat))             as visceral_fat 
+ , round(Avg(bmr))                     as bmr 
+ , round(Avg(bodyage))                  as bodyage 
+ , round(Avg(heart_rate))               as heart_rate 
+ , round(Avg(heart_rate_real_time))     as heart_rate_real_time 
+ , round(Avg(blood_pressure_up))        as blood_pressure_up 
+ , round(Avg(blood_pressure_down))      as blood_pressure_down 
+ , round(Avg(blood_oxygen))             as blood_oxygen 
+ , round(Avg(blood_oxygen_real_time))   as blood_oxygen_real_time 
+ , round(Avg(ecg))                      as ecg 
+ , round(Avg(steps))                   as steps 
+ , round(Avg(calories_burt))            as calories_burt 
+ , round(Avg(spo2))                    as spo2 
+ , round(Avg(sleep_minutes))            as sleep_minutes 
+ , round(Avg(sleep_hours))              as sleep_hours 
+ , round(Avg(deep_sleep))               as deep_sleep
+ , round(Avg(shallow_sleep))            as shallow_sleep
+ , round(Min(sys),2)                     as min_sys
+ , round(Min(dia),2)                      as min_dia 
+ , round (Min(pul),2)                      as min_pul 
+ , round(Min(body_weight),2)             as min_body_weight
+ , round(Min(bmi),2)                      as min_bmibmi 
+ , round(Min(skeleton),2)                 as min_skeleton 
+ , round(Min(fat),2)                      as min_fat 
+ , round(Min(muscle),2)                  as min_muscle 
+ , round(Min(moisture),2)                 as min_moisture 
+ , round(Min(visceral_fat),2)             as min_visceral_fat 
+ , round(Min(bmr),2)                     as min_bmr 
+ , round(Min(bodyage),2)                  as min_bodyage 
+ , round(Min(heart_rate),2)               as min_heart_rate 
+ , round(Min(heart_rate_real_time),2)     as min_heart_rate_real_time 
+ , round(Min(blood_pressure_up),2)        as min_blood_pressure_up 
+ , round(Min(blood_pressure_down),2)      as min_blood_pressure_down 
+ , round(Min(blood_oxygen),2)             as min_blood_oxygen 
+ , round(Min(blood_oxygen_real_time),2)   as min_blood_oxygen_real_time 
+ , round(Min(ecg),2)                      as min_ecg 
+ , round(Min(steps),2)                   as min_steps 
+ , round(Min(calories_burt),2)            as min_calories_burt 
+ , round(Min(spo2),2)                    as min_spo2 
+ , round(Min(sleep_minutes),2)            as min_sleep_minutes 
+ , round(Min(sleep_hours),2)              as min_sleep_hours 
+ , round(Min(deep_sleep))               as min_deep_sleep
+ , round(Min(shallow_sleep))            as min_shallow_sleep
+ , round(max(sys),2)                     as max_sys
+ , round(max(dia),2)                      as max_dia 
+ , round (max(pul),2)                      as max_pul 
+ , round(max(body_weight),2)             as max_body_weight
+ , round(max(bmi),2)                      as max_bmi
+ , round(max(skeleton),2)                 as max_skeleton 
+ , round(max(fat),2)                      as max_fat 
+ , round(max(muscle),2)                  as max_muscle 
+ , round(max(moisture),2)                 as max_moisture 
+ , round(max(visceral_fat),2)             as max_visceral_fat 
+ , round(max(bmr),2)                     as max_bmr 
+ , round(max(bodyage),2)                  as max_bodyage 
+ , round(max(heart_rate),2)               as max_heart_rate 
+ , round(max(heart_rate_real_time),2)     as max_heart_rate_real_time 
+ , round(max(blood_pressure_up),2)        as max_blood_pressure_up 
+ , round(max(blood_pressure_down),2)      as max_blood_pressure_down 
+ , round(max(blood_oxygen),2)             as max_blood_oxygen 
+ , round(max(blood_oxygen_real_time),2)   as max_blood_oxygen_real_time 
+ , round(max(ecg),2)                      as max_ecg 
+ , round(max(steps),2)                   as max_steps 
+ , round(max(calories_burt),2)            as max_calories_burt 
+ , round(max(spo2),2)                    as max_spo2 
+ , round(max(sleep_minutes),2)            as max_sleep_minutes 
+ , round(max(sleep_hours))              as max_sleep_hours 
+ , round(max(deep_sleep))               as max_deep_sleep
+ , round(max(shallow_sleep))            as max_shallow_sleep
+  from public."device_agg_monthly1" 
+				
+  GROUP BY month,device_id,user_id;
+	 
+
+END;
+$$ LANGUAGE plpgsql;

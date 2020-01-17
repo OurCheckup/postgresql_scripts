@@ -1,0 +1,293 @@
+--select qjobs70()
+--select * from Quaterly_Pivot2 
+--select * from subscriber_profile where user_id = 411
+--select * from public."Quaterly_Pivot" where user_id = 411 and body_weight is not null
+
+--create table Quaterly_pivot2 (vital varchar(40),values decimal(10,2),quarter integer,year integer,user_id integer,date date,initial decimal(10,2),target decimal(10,2),achieved decimal(10,2),performance decimal(10,2),normal_count decimal(10,2),total_count decimal(10,2),target_new decimal(10,2))
+--delete from public."Quaterly_Pivot"
+--select qjobs70()
+CREATE OR REPLACE FUNCTION public.qjobs70(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+begin
+drop table ss2;
+create table ss2 (id int GENERATED ALWAYS AS IDENTITY,user_id int);
+insert into ss2 (user_id)
+select distinct user_id  from public."Quaterly_Final" ;
+select count(*) into count1 from ss2;
+delete from public."Quaterly_Pivot";
+while (loop1<=(count1)) LOOP
+select user_id into userid from ss2 where id=loop1;
+insert into public."Quaterly_Pivot"
+(select  'sys',sys,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and sys is not null order by date asc limit 1) 
+union all
+(select  'sys',sys,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and sys is not null order by date desc limit 1) 
+union all
+(select  'sys',sys,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and sys is not null order by date asc limit 1) 
+union all
+(select  'sys',sys,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and sys is not null order by date desc limit 1)
+union all
+(select  'sys',sys,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and sys is not null order by date asc limit 1)  
+union all
+(select  'sys',sys,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and sys is not null order by date desc limit 1)
+union all
+(select  'sys',sys,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and sys is not null order by date asc limit 1)  
+union all
+(select  'sys',sys,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by sys,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and sys is not null order by date desc limit 1)
+union all
+(select  'dia',dia,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and dia is not null order by date asc limit 1)
+union all
+(select  'dia',dia,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and dia is not null order by date desc limit 1 ) 
+union all
+(select  'dia',dia,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and dia is not null order by date asc limit 1 )
+union all
+(select  'dia',dia,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and dia is not null order by date desc limit 1)
+union all
+(select  'dia',dia,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and dia is not null order by date asc limit 1 ) 
+union all
+(select  'dia',dia,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and dia is not null order by date desc limit 1)
+union all
+(select  'dia',dia,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and dia is not null order by date asc limit 1 ) 
+union all
+(select  'dia',dia,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by dia,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and dia is not null order by date desc limit 1)
+union all
+(select  'body_weight',body_weight,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by body_weight,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and body_weight is not null order by date asc limit 1 )
+union all
+(select  'body_weight',body_weight,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by body_weight,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and body_weight is not null order by date desc limit 1)  
+union all
+(select  'body_weight',body_weight,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by body_weight,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and body_weight is not null order by date asc limit 1 )
+union all
+(select  'body_weight',body_weight,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by body_weight,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and body_weight is not null order by date desc limit 1)
+union all
+(select  'body_weight',body_weight,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by body_weight,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and body_weight is not null order by date asc limit 1 ) 
+union all
+(select  'body_weight',body_weight,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by body_weight,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and body_weight is not null order by date desc limit 1)
+union all
+(select  'body_weight',body_weight,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by body_weight,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and body_weight is not null order by date asc limit 1 ) 
+union all
+(select  'body_weight',body_weight,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by body_weight,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and body_weight is not null order by date desc limit 1)
+union all
+(select  'bmi',bmi,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and bmi is not null order by date asc limit 1 )
+union all
+(select  'bmi',bmi,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id ,date  having min(date)=min(date) and quarter = 1 and user_id = userid and bmi is not null order by date desc limit 1)  
+union all
+(select  'bmi',bmi,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and bmi is not null order by date asc limit 1 )
+union all
+(select  'bmi',bmi,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and bmi is not null order by date desc limit 1)
+union all
+(select  'bmi',bmi,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and bmi is not null order by date asc limit 1 ) 
+union all
+(select  'bmi',bmi,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and bmi is not null order by date desc limit 1)
+union all
+(select  'bmi',bmi,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id,date having max(date)=max(date) and quarter = 4 and user_id = userid and bmi is not null order by date asc limit 1)  
+union all
+(select  'bmi',bmi,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bmi,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and bmi is not null order by date desc limit 1)
+union all
+(select  'fat',fat,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and fat is not null order by date asc limit 1 )
+union all
+(select  'fat',fat,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and fat is not null order by date desc limit 1)  
+union all
+(select  'fat',fat,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and fat is not null order by date asc limit 1) 
+union all
+(select  'fat',fat,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and fat is not null order by date desc limit 1)
+union all
+(select  'fat',fat,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and fat is not null order by date asc limit 1)  
+union all
+(select  'fat',fat,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and fat is not null order by date desc limit 1)
+union all
+(select  'fat',fat,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and fat is not null order by date asc limit 1 ) 
+union all
+(select  'fat',fat,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by fat,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and fat is not null order by date desc limit 1)
+union all
+(select  'muscle',muscle,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by muscle,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and muscle is not null order by date asc limit 1 )
+union all
+(select  'muscle',muscle,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by muscle,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and muscle is not null order by date desc limit 1 ) 
+union all
+(select  'muscle',muscle,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by muscle,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and muscle is not null order by date asc limit 1 )
+union all
+(select  'muscle',muscle,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by muscle,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and muscle is not null order by date desc limit 1)
+union all
+(select  'muscle',muscle,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by muscle,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and muscle is not null order by date asc limit 1)  
+union all
+(select  'muscle',muscle,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by muscle,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and muscle is not null order by date desc limit 1)
+union all
+(select  'muscle',muscle,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by muscle,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and muscle is not null order by date asc limit 1 ) 
+union all
+(select  'muscle',muscle,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by muscle,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and muscle is not null order by date desc limit 1)
+union all
+(select  'moisture',moisture,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by moisture,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and moisture is not null order by date asc limit 1 )
+union all
+(select  'moisture',moisture,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by moisture,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and moisture is not null order by date desc limit 1)  
+union all
+(select  'moisture',moisture,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by moisture,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and moisture is not null order by date asc limit 1 )
+union all
+(select  'moisture',moisture,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by moisture,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and moisture is not null order by date desc limit 1)
+union all
+(select  'moisture',moisture,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by moisture,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and moisture is not null order by date asc limit 1 ) 
+union all
+(select  'moisture',moisture,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by moisture,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and moisture is not null order by date desc limit 1)
+union all
+(select  'moisture',moisture,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by moisture,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and moisture is not null order by date asc limit 1 ) 
+union all
+(select  'moisture',moisture,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by moisture,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and moisture is not null order by date desc limit 1)
+union all
+(select  'visceral_fat',visceral_fat,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by visceral_fat,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and visceral_fat is not null order by date asc limit 1 )
+union all
+(select  'visceral_fat',visceral_fat,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by visceral_fat,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and visceral_fat is not null order by date desc limit 1)  
+union all
+(select  'visceral_fat',visceral_fat,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by visceral_fat,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and visceral_fat is not null order by date asc limit 1) 
+union all
+(select  'visceral_fat',visceral_fat,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by visceral_fat,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and visceral_fat is not null order by date desc limit 1)
+union all
+(select  'visceral_fat',visceral_fat,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by visceral_fat,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and visceral_fat is not null order by date asc limit 1 ) 
+union all
+(select  'visceral_fat',visceral_fat,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by visceral_fat,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and visceral_fat is not null order by date desc limit 1)
+union all
+(select  'visceral_fat',visceral_fat,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by visceral_fat,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and visceral_fat is not null order by date asc limit 1 ) 
+union all
+(select  'visceral_fat',visceral_fat,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by visceral_fat,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and visceral_fat is not null order by date desc limit 1)
+union all
+(select  'bmr',bmr,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bmr,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and bmr is not null order by date asc limit 1 )
+union all
+(select  'bmr',bmr,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bmr,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and bmr is not null order by date desc limit 1 ) 
+union all
+(select  'bmr',bmr,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bmr,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and bmr is not null order by date asc limit 1) 
+union all
+(select  'bmr',bmr,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bmr,quarter,year,user_id,date having min(date)=min(date) and quarter = 2 and user_id = userid and bmr is not null order by date desc limit 1)
+union all
+(select  'bmr',bmr,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bmr,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and bmr is not null order by date asc limit 1 ) 
+union all
+(select  'bmr',bmr,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bmr,quarter,year,user_id,date having min(date)=min(date) and quarter = 3 and user_id = userid and bmr is not null order by date desc limit 1)
+union all
+(select  'bmr',bmr,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bmr,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and bmr is not null order by date asc limit 1 ) 
+union all
+(select  'bmr',bmr,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bmr,quarter,year,user_id,date having min(date)=min(date) and quarter = 4 and user_id = userid and bmr is not null order by date desc limit 1)
+union all
+(select  'bodyage',bodyage,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bodyage,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and bodyage is not null order by date asc limit 1 )
+union all
+(select  'bodyage',bodyage,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bodyage,quarter,year,user_id,date having min(date)=min(date) and quarter = 1 and user_id = userid and bodyage is not null order by date desc limit 1)  
+union all
+(select  'bodyage',bodyage,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bodyage,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and bodyage is not null order by date asc limit 1) 
+union all
+(select  'bodyage',bodyage,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bodyage,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and bodyage is not null order by date desc limit 1)
+union all
+(select  'bodyage',bodyage,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bodyage,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and bodyage is not null order by date asc limit 1)  
+union all
+(select  'bodyage',bodyage,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bodyage,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and bodyage is not null order by date desc limit 1)
+union all
+(select  'bodyage',bodyage,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by bodyage,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and bodyage is not null order by date asc limit 1)  
+union all
+(select  'bodyage',bodyage,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by bodyage,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and bodyage is not null order by date desc limit 1)
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and heart_rate is not null order by date asc limit 1) 
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and heart_rate is not null order by date desc limit 1)  
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and heart_rate is not null order by date asc limit 1) 
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and heart_rate is not null order by date desc limit 1)
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and heart_rate is not null order by date asc limit 1)  
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and heart_rate is not null order by date desc limit 1)
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and heart_rate is not null order by date asc limit 1)  
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by heart_rate,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and heart_rate is not null order by date desc limit 1)
+union all
+(select  'ecg',ecg,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by ecg,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid and ecg is not null order by date asc limit 1 )
+union all
+(select  'ecg',ecg,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by ecg,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid and ecg is not null order by date desc limit 1)  
+union all
+(select  'ecg',ecg,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by ecg,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid and ecg is not null order by date asc limit 1) 
+union all
+(select  'ecg',ecg,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by ecg,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid and ecg is not null order by date desc limit 1)
+union all
+(select  'ecg',ecg,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by ecg,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid and ecg is not null order by date asc limit 1 ) 
+union all
+(select  'ecg',ecg,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by ecg,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid and ecg is not null order by date desc limit 1)
+union all
+(select  'ecg',ecg,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by ecg,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid and ecg is not null order by date asc limit 1) 
+union all
+(select  'ecg',ecg,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by ecg,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid and ecg is not null order by date desc limit 1)
+union all
+(select  'steps',sum(steps),quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date  having quarter=1 and user_id = userid and	min(date(date)) =min(date(date )) limit 1) 
+union all
+(select  'steps',sum(steps),quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date  having quarter=1 and user_id = userid and	min(date(date)) =min(date(date )) order by date(date) desc limit 1)  
+union all
+(select  'steps',sum(steps),quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date  having quarter=2 and user_id = userid and	min(date(date)) =min(date(date )) limit 1) 
+union all
+(select  'steps',sum(steps),quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date  having quarter=2 and user_id = userid and	min(date(date)) =min(date(date )) order by date(date) desc limit 1)  
+union all
+(select  'steps',sum(steps),quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date   having quarter=3 and user_id = userid and	min(date(date)) =min(date(date )) limit 1) 
+union all
+(select  'steps',sum(steps),quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date  having quarter=3 and user_id = userid and	min(date(date)) =min(date(date )) order by date(date) desc limit 1)  
+union all
+(select  'steps',sum(steps),quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date  having quarter=4 and user_id = userid and	min(date(date)) =min(date(date )) limit 1) 
+union all
+(select  'steps',sum(steps),quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by steps,quarter,year,user_id,date  having quarter=4 and user_id = userid and	min(date(date)) =min(date(date )) order by date(date) desc limit 1)  
+union all
+(select  'WHR',WHR,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by WHR,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid  order by date asc limit 1) 
+union all
+(select  'WHR',WHR,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by WHR,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid  order by date asc limit 1 )
+union all
+(select  'WHR',WHR,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by WHR,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid  order by date asc limit 1)  
+union all
+(select  'WHR',WHR,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by WHR,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid order by date asc limit 1)  
+union all
+(select  'HBA1C',HBA1C,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by HBA1C,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid  order by date asc limit 1)  
+union all
+(select  'HBA1C',HBA1C,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by HBA1C,quarter,year,user_id,date having max(date)=max(date) and quarter = 2 and user_id = userid  order by date asc limit 1 )
+union all
+(select  'HBA1C',HBA1C,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by HBA1C,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid order by date asc limit 1 ) 
+union all
+(select  'HBA1C',HBA1C,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by HBA1C,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid  order by date asc limit 1 ) 
+union all
+(select  'HDL_Cholesterol',HDL_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by HDL_Cholesterol,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid  order by date asc limit 1)  
+union all
+(select  'HDL_Cholesterol',HDL_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by HDL_Cholesterol,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid  order by date asc limit 1) 
+union all
+(select  'HDL_Cholesterol',HDL_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by HDL_Cholesterol,quarter,year,user_id ,date having max(date)=max(date) and quarter = 3 and user_id = userid  order by date asc limit 1)  
+union all
+(select  'HDL_Cholesterol',HDL_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by HDL_Cholesterol,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid  order by date asc limit 1 ) 
+union all
+(select  'LDL_Cholesterol',LDL_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by LDL_Cholesterol,quarter,year,user_id ,date having max(date)=max(date) and quarter = 1 and user_id = userid  order by date asc limit 1 )  
+union all
+(select  'LDL_Cholesterol',LDL_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by LDL_Cholesterol,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid order by date asc limit 1 )
+union all
+(select  'LDL_Cholesterol',LDL_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by LDL_Cholesterol,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid  order by date asc limit 1 ) 
+union all
+(select  'LDL_Cholesterol',LDL_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by LDL_Cholesterol,quarter,year,user_id,date having max(date)=max(date) and quarter = 4 and user_id = userid  order by date asc limit 1)  
+union all
+(select  'Total_Cholesterol',Total_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by Total_Cholesterol,quarter,year,user_id,date  having max(date)=max(date) and quarter = 1 and user_id = userid  order by date asc limit 1 )
+union all
+(select  'Total_Cholesterol',Total_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by Total_Cholesterol,quarter,year,user_id,date  having max(date)=max(date) and quarter = 2 and user_id = userid  order by date asc limit 1 )
+union all
+(select  'Total_Cholesterol',Total_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by Total_Cholesterol,quarter,year,user_id,date  having max(date)=max(date) and quarter = 3 and user_id = userid  order by date asc limit 1 ) 
+union all
+(select  'Total_Cholesterol',Total_Cholesterol,quarter,year,user_id,max(date)   from  public."Quaterly_Final" group by Total_Cholesterol,quarter,year,user_id,date  having max(date)=max(date) and quarter = 4 and user_id = userid  order by date asc limit 1 ) 
+union all
+(select  'Triglycerides',Triglycerides,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by Triglycerides,quarter,year,user_id,date  having min(date)=min(date) and quarter = 1 and user_id = userid  order by date desc limit 1)  
+union all
+(select  'Triglycerides',Triglycerides,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by Triglycerides,quarter,year,user_id,date  having min(date)=min(date) and quarter = 2 and user_id = userid order by date desc limit 1)
+union all
+(select  'Triglycerides',Triglycerides,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by Triglycerides,quarter,year,user_id,date  having min(date)=min(date) and quarter = 3 and user_id = userid  order by date desc limit 1)
+union all
+(select  'Triglycerides',Triglycerides,quarter,year,user_id,min(date)   from  public."Quaterly_Final" group by Triglycerides,quarter,year,user_id,date  having min(date)=min(date) and quarter = 4 and user_id = userid  order by date desc limit 1);
+ loop1 :=loop1+1;
+end LOOP;
+end;
+			   $BODY$;
+
+ALTER FUNCTION public.qjobs70()
+    OWNER TO postgres;
+					
+

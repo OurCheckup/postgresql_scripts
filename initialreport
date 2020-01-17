@@ -1,0 +1,82 @@
+--select initialreport()
+--select * from initial_3 where user_id = 699
+--update initial_3
+--select * from aa1  where user_id = 658
+--set initial = 2500 where user_id = 411 and vital = 'steps'
+--select * from a1122 where user_id = 658 and quarter = 1
+--delete from initial_3 where user_id = 658
+--drop table  aa1;
+CREATE OR REPLACE FUNCTION public.initialreport(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE loop1 integer:=1; 
+   DECLARE userid integer;
+   DECLARE count1 integer;
+   DECLARE vital_1 character varying(30);
+Begin   
+
+drop table int1;
+create table int1 (id  serial,user_id int,vital character varying(30));
+													
+insert into int1 (user_id,vital)
+select distinct user_id,vital  from public."Quaterly_Pivot" where user_id not in (select distinct user_id from initial_3) ;
+																						  DECLARE userid_21 integer;
+DECLARE count41 integer;
+DECLARE vital_3 character varying(30);
+ DECLARE loop13 integer:=1;
+Begin 
+drop table a1122;
+create table a1122 (id serial,user_id int,vital character varying(30));
+insert into a1122 (user_id,vital)
+select distinct user_id,vital from public."Quaterly_Pivot";
+select count (*) into count41 from a1122 ;
+
+while (loop13<=(count41)) LOOP
+select user_id into userid_21 from a1122 where id=loop13;
+select vital into vital_3 from a1122 where id=loop13;
+
+																						 -- insert into int1 (user_id,vital)
+--select distinct user_id,vital  from public."Quaterly_Pivot" where user_id  = userid_21 and 
+--vital not  in (select distinct vital from int1 where user_id = userid_21);	
+								--loop13 :=loop13+1;
+end loop;
+
+end;
+select count (*) into count1 from int1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from int1 where id=loop1;
+select vital into vital_1 from int1 where id=loop1;
+
+if exists(select * from public."Quaterly_Pivot" where user_id=userid and vital=vital_1 and quarter=1) then	
+
+insert into initial_3 (vital,user_id,initial,target,date) 
+			   select vital,user_id,initial,target,min(date) 
+			   from public."Quaterly_Pivot" where user_id = userid and quarter=1 and vital=vital_1  group by vital,user_id,initial,target ;
+elsif  exists	
+(select * from public."Quaterly_Pivot" where user_id=userid and vital=vital_1 and quarter=2) then	
+
+insert into initial_3 (vital,user_id,initial,target,date) select vital,user_id,initial,target,min(date)  from public."Quaterly_Pivot" where user_id = userid and quarter=2 and vital=vital_1  group by vital,user_id,initial,target ;
+elsif  exists	
+(select * from public."Quaterly_Pivot" where user_id=userid and vital=vital_1 and quarter=3) then	
+			   
+insert into initial_3 (vital,user_id,initial,target,date) select vital,user_id,initial,target,min(date)  from public."Quaterly_Pivot" where user_id = userid and quarter=3 and vital=vital_1  group by vital,user_id,initial,target ;
+elsif  exists	
+(select * from public."Quaterly_Pivot" where user_id=userid and vital=vital_1 and quarter=4) then	
+
+insert into initial_3 (vital,user_id,initial,target,date) select vital,user_id,initial,target,min(date)  from public."Quaterly_Pivot" where user_id = userid and quarter=4 and vital=vital_1  group by vital,user_id,initial,target ;
+end if;
+loop1 :=loop1+1;
+end loop;
+end;
+						 $BODY$;
+
+ALTER FUNCTION public.initialreport()
+    OWNER TO postgres;			   
+			   			   			   
+			   

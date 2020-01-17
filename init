@@ -1,0 +1,104 @@
+--select deljob()
+--select *   from device_details  where user_id=542 order by vital
+--select vital,user_id,initial,target,ideal,date from inti4 group by vital,user_id,initial,target,ideal,date 
+--select distinct user_id from initial_3
+--select count(*) from initial_3  where user_id=640; 
+--select count(*) from public."Quaterly_Pivot"  where user_id=640;
+--select initialreport5()
+--select distinct user_id from initial_3
+--delete from initial_3 where 
+--delete 
+--delete from count1
+--select 
+--update initial_3
+--select * from initial_3 where user_id = 732
+--set initial = 2500 where user_id = 411 and vital = 'steps'
+--select * from public."Quaterly_Pivot" where user_id = 732 and quarter = 1
+--delete from initial_3 where user_id = 658
+CREATE OR REPLACE FUNCTION public.initialreport5(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+  
+DECLARE uid integer;
+DECLARE c1 integer;
+DECLARE v1 character varying(30);
+declare initial1 numeric(10,2);
+ DECLARE l1 integer:=1;
+Begin 
+drop table ex1;
+create table ex1 (id serial,user_id int,vital character varying(30));
+insert into ex1 (user_id,vital)
+																
+select distinct user_id,vital from public."Quaterly_Pivot" where  date >=
+(select max(date) - interval '24 hours 0 minute' 
+from public."Quaterly_Pivot") order by user_id;
+																
+select count (*) into c1 from ex1 ;
+
+while (l1<=(c1)) LOOP
+select user_id into uid from ex1 where id=l1;
+select vital into v1 from ex1 where id=l1;
+												
+if exists(select * from public."Quaterly_Pivot" where user_id=uid and vital=v1 and quarter=1) then	
+select initial into initial1 
+			   from public."Quaterly_Pivot" group by vital,user_id,initial,date,quarter
+			   having date=min(date) and  user_id = uid and quarter=1 and 
+			   vital=v1;
+			   if(initial1 is not null ) then
+insert into initial_3 (vital,user_id,initial,target,date) 
+			   select vital,user_id,initial,target,min(date) 
+			   from public."Quaterly_Pivot" where user_id = uid and quarter=1 and
+vital not  in (select distinct vital from initial_3 where user_id = uid)  group by vital,user_id,initial,target ;
+			end if;
+elsif  exists	
+(select * from public."Quaterly_Pivot" where user_id=uid and vital=v1 and quarter=2) then	
+select initial into initial1 
+			   from public."Quaterly_Pivot" group by vital,user_id,initial,date,quarter
+			   having date=min(date) and  user_id = uid and quarter=2 and 
+			   vital=v1;
+			   if(initial1 is not null) then
+
+insert into initial_3 (vital,user_id,initial,target,date) select vital,user_id,initial,target,min(date)  
+			from public."Quaterly_Pivot" where 
+			user_id = uid and quarter=2 and
+vital not  in (select distinct vital from initial_3 where user_id = uid)  group by vital,user_id,initial,target ;
+end if;
+			elsif  exists	
+(select * from public."Quaterly_Pivot" where user_id=uid and vital=v1 and quarter=3) then	
+			   select initial into initial1 
+			   from public."Quaterly_Pivot" group by vital,user_id,initial,date,quarter
+			   having date=min(date) and  user_id = uid and quarter=3 and 
+			   vital=v1;
+			   if(initial1 is not null) then
+insert into initial_3 (vital,user_id,initial,target,date) select vital,user_id,initial,target,min(date)  
+			from public."Quaterly_Pivot" where user_id = uid and quarter=3 and
+vital not  in (select distinct vital from initial_3 where user_id = uid)  group by vital,user_id,initial,target ;
+end if;
+			elsif  exists	
+(select * from public."Quaterly_Pivot" where user_id=uid and vital=v1 and quarter=4) then	
+select initial into initial1 
+			   from public."Quaterly_Pivot" group by vital,user_id,initial,date,quarter
+			   having date=min(date) and  user_id = uid and quarter=4 and 
+			   vital=v1;
+			   if(initial1 is not null) then
+insert into initial_3 (vital,user_id,initial,target,date) select vital,user_id,initial,target,min(date)  
+			from public."Quaterly_Pivot" where user_id = uid and quarter=4 and
+vital not  in (select distinct vital from initial_3 where user_id = uid)  group by vital,user_id,initial,target ;
+end if;
+			end if;
+l1 :=l1+1;
+end loop;
+			   
+			   
+end;
+						 $BODY$;
+
+ALTER FUNCTION public.initialreport5()
+    OWNER TO postgres;			   
+			   			   			   
+			   

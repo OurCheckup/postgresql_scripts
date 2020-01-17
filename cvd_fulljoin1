@@ -1,0 +1,454 @@
+--select * from op  where user_id = 477;
+--select  * from device_details where user_id = 411 and steps is not null  and date::date = '2019-05-24'
+--select * from cvd_sample1
+--select cvd_Fulljoin()
+create OR REPLACE FUNCTION cvd_Fulljoin()
+RETURNS void as $$ 
+Begin
+drop table cvd_sample;
+create table cvd_sample as
+select  s.user_id,s.race,s.treatement_for_high_blood_pressure,s.diabetes,s.smoker,f.vital,f.initial,m.age,m.gender as sex  from subscriber_profile s full outer join
+initial_3 f on s.user_id=f.user_id full outer join medical_summary m on s.user_id=m.user_id where f.vital in ('sys','HDL_Cholesterol','LDL_Cholesterol','Total_Cholesterol')
+group by s.user_id,s.race,s.treatement_for_high_blood_pressure,s.diabetes,s.smoker,f.vital,f.initial,m.age,m.gender;
+drop table cvd_sample1;
+create table cvd_sample1(risk_factor,Values,user_id,optimal_values,yn)
+as
+select  'race',race,user_id,'',0 from public."cvd_sample" group by race,user_id
+Union all
+select  'treatement_for_high_blood_pressure',treatement_for_high_blood_pressure ,user_id,'',0 from public."cvd_sample" group by treatement_for_high_blood_pressure ,user_id 
+Union all
+select 'diabetes',diabetes,user_id,'',0  from public."cvd_sample" group by diabetes,user_id 
+Union all
+select 'smoker',smoker,user_id,'',0  from public."cvd_sample" group by smoker,user_id
+Union all
+select 'age', age::varchar,user_id,'',0  from public."cvd_sample" group by age,user_id
+Union all
+select 'sex',sex,user_id,'',0  from public."cvd_sample" group by sex,user_id
+Union all
+select vital,initial::varchar,user_id,'',0  from public."cvd_sample" group by vital,initial,user_id; 
+update cvd_sample1
+set optimal_values='No' where risk_factor='smoker' ;
+update cvd_sample1
+set optimal_values='170' where risk_factor='Total_Cholesterol'; 
+update cvd_sample1
+set optimal_values='50' where risk_factor='HDL_Cholesterol'; 
+update cvd_sample1
+set optimal_values='110' where risk_factor='sys' ;
+update cvd_sample1
+set optimal_values='No' where risk_factor='treatment_for_high_blood_pressure';
+update cvd_sample1
+set optimal_values='No' where risk_factor='diabetes';
+update cvd_sample1
+set yn=0 where values='No';
+update cvd_sample1
+set yn=1 where values='Yes';
+update cvd_sample1 set optimal_values=0 where risk_factor='diabetes'
+and optimal_values='No';
+update cvd_sample1 set optimal_values=1 where risk_factor='diabetes'
+and optimal_values='Yes';
+update cvd_sample1 set optimal_values=0 where risk_factor='smoker'
+and optimal_values='No';
+update cvd_sample1 set optimal_values=1 where risk_factor='smoker'
+and optimal_values='Yes';
+drop table u1;
+create table u1(id serial ,user_id int);
+ insert into u1(user_id)
+select distinct user_id  from cvd_sample1; 
+drop table ascvd;
+create table ascvd as
+select names,enter_value,optimal,u1.user_id  from ascvd2 cross join u1 group by names,enter_value,optimal,u1.user_id;
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+update ascvd set enter_value = 0.00,optimal = 0.00;
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;			   
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end from
+ cvd_sample1 where risk_factor='age' and user_id=userid group by values,user_id limit 1)
+where names='lnage' and user_id=userid;
+			   
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where 
+																			risk_factor='Total_Cholesterol' and user_id=userid group by values,user_id limit 1)
+where names='lntot' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='HDL_Cholesterol' and user_id=userid group by values,user_id limit 1)
+where names='lnhdl' and user_id=userid;
+
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(10,2))*(select yn from cvd_sample1 where risk_factor ='treatement_for_high_blood_pressure' and user_id = userid  )  end 
+ from cvd_sample1 where risk_factor='sys' and user_id=userid group by values,yn,user_id limit 1)
+where names='trlnsbp' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) *yn 
+ end from cvd_sample1 where risk_factor='sys' and user_id=411 group by yn,values,user_id limit 1)
+where names='ntrlnsbp' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) * ln(abs(values::decimal(15,9))) end from cvd_sample1 where risk_factor='age' and user_id=userid group by values,user_id limit 1)
+where names='age2' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end  from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='Total_Cholesterol' and user_id=userid group by values,user_id limit 1)
+where names='agetc' and user_id=userid;
+
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end  from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='HDL_Cholesterol' and user_id=userid group by values,user_id limit 1)
+where names='agehdl' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end  from cvd_sample1 where risk_factor='age' and user_id=userid group by values,user_id limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  
+																					from cvd_sample1 where risk_factor='sys'
+																					and user_id=userid group by values,user_id limit 1)*
+(select yn from cvd_sample1 where risk_factor='treatement_for_high_blood_pressure' and user_id=userid group by yn limit 1 )
+where names='agetsbp' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end 
+																					from cvd_sample1 where risk_factor='age'
+																					and user_id=userid
+																					group by values,user_id limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) *yn 
+ end from cvd_sample1 where risk_factor='sys' and user_id=userid group by yn,values,user_id limit 1)
+where names='agentsbp' and user_id=userid;
+
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end  from cvd_sample1 where risk_factor='age' and user_id=userid group by values,user_id limit 1)*
+(select yn from cvd_sample1 where risk_factor='smoker' and user_id=userid group by yn limit 1)
+where names='agesmoke' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end  
+																					from cvd_sample1 where
+																					risk_factor='age' and user_id=userid 
+																					group by values,user_id limit 1)*
+(select yn from cvd_sample1 where risk_factor='diabetes' and user_id=userid group by yn limit 1)
+where names='agedm' and user_id=userid;
+loop1 :=loop1+1;
+end LOOP;
+end;
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;	
+
+update ascvd set optimal=
+(select  case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end from cvd_sample1 where risk_factor='age'and user_id=userid group by values limit 1)
+where names='lnage' and user_id=userid;
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(optimal_values::decimal(15,9)) end from cvd_sample1 where risk_factor='Total_Cholesterol'and user_id=userid group by optimal_values,values limit 1)
+where names='lntot' and user_id=userid;
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(optimal_values::decimal(15,9)) end from cvd_sample1 where risk_factor='HDL_Cholesterol'and user_id=userid
+								   group by values,optimal_values limit 1)
+where names='lnhdl' and user_id=userid;
+
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(optimal_values::decimal(15,9))*yn  end from cvd_sample1 where risk_factor='sys'and user_id=userid group by values,optimal_values,yn limit 1)
+where names='trlnsbp' and user_id=userid;
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(optimal_values::decimal(15,9)) end from cvd_sample1 where risk_factor='sys'and user_id=userid group by values,optimal_values limit 1)*
+(select yn from cvd_sample1 where risk_factor='treatement_for_high_blood_pressure' and user_id=userid group by yn limit 1)
+where names='ntrlnsbp' and user_id=userid;
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9)))* ln(abs(values::decimal(15,9))) end from cvd_sample1 where risk_factor='age'and user_id=userid group by values limit 1)
+where names='age2' and user_id=userid;
+
+update ascvd set optimal=
+(select  case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end from cvd_sample1 where risk_factor='age'and user_id=userid group by values,user_id limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(optimal_values::decimal(15,9)) end  from cvd_sample1 where risk_factor='HDL_Cholesterol'and user_id=userid
+group by values,optimal_values,user_id limit 1)
+where names='agehdl' and user_id=userid;
+									  
+
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end from cvd_sample1 where risk_factor='age'and user_id=userid group by values,user_id limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(optimal_values::decimal(15,9)) end from cvd_sample1 where risk_factor='Total_Cholesterol'and user_id=userid
+group by values,optimal_values,user_id limit 1)
+where names='agetc' and user_id=userid;
+
+
+
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*0
+--(select ln(optimal_values::decimal(15,9)) from cvd_sample1 where risk_factor='sys')--*
+--(select yn from cvd_sample1 where risk_factor='treatment_for_high_blood_pressure'and user_id=userid group by values )
+where names='agetsbp' and user_id=userid;
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end 
+																					from cvd_sample1 where risk_factor='age'
+																					and user_id=userid
+																					group by values,user_id limit 1) *
+(select case when values= '0.00' then values::decimal(15,9) else ln(optimal_values::decimal(15,9)) end from cvd_sample1 where risk_factor='sys'and user_id=userid group by values,optimal_values limit 1)*
+(select yn from cvd_sample1 where risk_factor='treatement_for_high_blood_pressure' and user_id=userid group by yn limit 1)
+where names='agentsbp' and user_id=userid;
+
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*
+(select yn from cvd_sample1 where risk_factor='smoker' and user_id=userid group by yn limit 1)
+where names='agesmoke' and user_id=userid;
+
+update ascvd set optimal=
+(select case when values= '0.00' then values::decimal(15,9) else ln(abs(values::decimal(15,9))) end from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*
+(select optimal_values::decimal(15,9)  from cvd_sample1 where risk_factor='diabetes'
+ and user_id=userid group by values,optimal_values)
+where names='agedm' and user_id=userid;
+loop1 :=loop1+1;
+end LOOP;
+end;	
+drop table op;
+create table op as
+select names,s0_10,mnxb,predict,cvd_predict,opt_predict,opt_cvd_predict,
+sex_race,ten_year_ascvd,opt_ten_year_ascvd,user_id from optimal_values cross join u1 group by names,s0_10,mnxb,predict,cvd_predict,opt_predict,opt_cvd_predict,
+sex_race,ten_year_ascvd,opt_ten_year_ascvd,user_id  ;
+		   declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;	
+update op set predict=
+17.1141*(select enter_value from ascvd where names='lnage'and user_id=userid group by enter_value)+
+ 0.9396*(select enter_value from ascvd where names='lntot'and user_id=userid group by enter_value)+
+ -18.9196*(select enter_value from ascvd where names='lnhdl'and user_id=userid group by enter_value)+
+ 4.4748*(select enter_value from ascvd where names ='agehdl'and user_id=userid group by enter_value)+
+ 29.2907*(select enter_value from ascvd where names='trlnsbp'and user_id=userid group by enter_value)+
+ -6.4321*(select enter_value from ascvd where names='agetsbp'and user_id=userid group by enter_value)+
+ 27.8197*(select enter_value from ascvd where names='ntrlnsbp'and user_id=userid group by enter_value)+
+ -6.0873*(select enter_value from ascvd where names='agentsbp'and user_id=userid group by enter_value)+
+ 0.6908*(select yn from cvd_sample1 where risk_factor='smoker'and user_id=userid group by yn)+
+ 0.8738*(select yn from cvd_sample1 where risk_factor='diabetes'and user_id=userid group by yn)
+ where names='AA_Women'and user_id=userid;
+ 
+ update op set predict=
+-29.799*(select enter_value from ascvd where names='lnage'and user_id=userid group by enter_value)+
+4.884*(select enter_value from ascvd where names='age2'and user_id=userid group by enter_value)+
+13.54*(select enter_value from ascvd where names='lntot'and user_id=userid group by enter_value)+
+-3.114*(select enter_value from ascvd where names='agetc'and user_id=userid group by enter_value)+
+-13.578*(select enter_value from ascvd where names='lnhdl'and user_id=userid group by enter_value)+
+3.149*(select enter_value from ascvd where names='agehdl'and user_id=userid group by enter_value)+
+2.019*(select enter_value from ascvd where names='trlnsbp'and user_id=userid group by enter_value)+
+1.957*(select enter_value from ascvd where names='ntrlnsbp'and user_id=userid group by enter_value)+
+7.574*(select yn from cvd_sample1 where risk_factor='smoker'and user_id=userid group by yn) +
+-1.665*(select enter_value from ascvd where names='agesmoke'and user_id=userid group by enter_value)+
+0.661*(select yn from cvd_sample1 where risk_factor='diabetes'and user_id=userid group by yn)
+ where names='WH_Women'and user_id=userid;
+ 
+ update op set predict=
+2.469*(select enter_value from ascvd where names='lnage'and user_id=userid group by enter_value)
++0.302*(select enter_value from ascvd where names='lntot'and user_id=userid group by enter_value)+
+-0.307*(select enter_value from ascvd where names='lnhdl'and user_id=userid group by enter_value)+
+1.916*(select enter_value from ascvd where names='trlnsbp'and user_id=userid group by enter_value)+
+1.809*(select enter_value from ascvd where names='ntrlnsbp'and user_id=userid group by enter_value)+
+0.549*(select yn from cvd_sample1 where risk_factor='smoker'and user_id=userid group by yn)+
+0.645*(select yn from cvd_sample1 where risk_factor='diabetes'and user_id=userid group by yn)
+ where names='AA_men'and user_id=userid;
+ 
+ 
+ update op set predict=
+12.344*(select enter_value from ascvd where names='lnage'and user_id=userid group by enter_value)+
+ 11.853*(select enter_value from ascvd where names='lntot'and user_id=userid group by enter_value)+
+ -2.664*(select enter_value from ascvd where names='agetc'and user_id=userid group by enter_value)+
+ -7.99*(select enter_value from ascvd where names='lnhdl'and user_id=userid group by enter_value)+
+ 1.769*(select enter_value from ascvd where names = 'agehdl'and user_id=userid group by enter_value)+
+ 1.797*(select enter_value from ascvd where names='trlnsbp'and user_id=userid group by enter_value)+
+ 1.764*(select enter_value from ascvd where names='ntrlnsbp'and user_id=userid  group by enter_value)+
+ 7.837*(select yn from cvd_sample1 where risk_factor='smoker'and user_id=userid group by yn)+
+ -1.795*(select enter_value from ascvd where names='agesmoke'and user_id=userid group by enter_value)+
+ 0.658*(select yn from cvd_sample1 where risk_factor='diabetes'and user_id=userid group by yn)
+ where names='WH_men'and user_id=userid;
+			  
+ update op set cvd_predict=1-(0.95334^(EXP(predict-86.6081)))
+ where names='AA_Women'and user_id=394;
+ update op set cvd_predict=1-(0.96652^(EXP(predict-(-29.1817))))
+ where names='WH_Women'and user_id=userid;
+ update op set cvd_predict=1-(0.89536^(EXP(predict-19.5425)))
+ where names='AA_men'and user_id=userid;
+ update op set cvd_predict=1-(0.91436^(EXP(predict-61.1816)))
+ where names='WH_men' and user_id=userid	;
+loop1 :=loop1+1;
+end LOOP;
+end;
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;
+
+update op set opt_predict=
+17.1141*(select optimal from ascvd where names='lnage'and user_id=userid group by optimal)+
+ 0.9396*(select optimal from ascvd where names='lntot'and user_id=userid  group by optimal)+
+ (-18.9196*(select optimal from ascvd where names='lnhdl'and user_id=userid  group by optimal))+
+ 4.4748*(select optimal from ascvd where names ='agehdl'and user_id=userid  group by optimal)+
+ 29.2907*(select optimal from ascvd where names='trlnsbp'and user_id=userid  group by optimal)+
+ (-6.4321*(select optimal from ascvd where names='agetsbp'and user_id=userid  group by optimal))+
+ 27.8197*(select optimal from ascvd where names='ntrlnsbp'and user_id=userid  group by optimal)+
+ (-6.0873*(select optimal from ascvd where names='agentsbp'and user_id=userid  group by optimal))+
+ 0.6908*(select optimal_values::int8 from cvd_sample1 where risk_factor='smoker'and user_id=userid  group by optimal_values)+
+ 0.8738*(select optimal_values::int8 from cvd_sample1 where risk_factor='diabetes'and user_id=userid  group by optimal_values)
+ where names='AA_Women'and user_id=userid;
+ 
+ update op set opt_predict=
+-29.799*(select optimal from ascvd where names='lnage'and user_id=userid  group by optimal)+
+4.884*(select optimal from ascvd where names='age2'and user_id=userid  group by optimal)+
+13.54*(select optimal from ascvd where names='lntot'and user_id=userid  group by optimal)+
+-3.114*(select optimal from ascvd where names='agetc'and user_id=userid  group by optimal)+
+-13.578*(select optimal from ascvd where names='lnhdl'and user_id=userid  group by optimal)+
+3.149*(select optimal from ascvd where names='agehdl'and user_id=userid  group by optimal)+
+2.019*(select optimal from ascvd where names='trlnsbp'and user_id=userid  group by optimal)+
+1.957*(select optimal from ascvd where names='ntrlnsbp'and user_id=userid  group by optimal)+
+7.574*(select optimal_values::int8 from cvd_sample1 where risk_factor='smoker'and user_id=userid  group by optimal_values) +
+-1.665*(select optimal from ascvd where names='agesmoke' and user_id=userid  group by optimal)+
+0.661*(select optimal_values::int8 from cvd_sample1 where risk_factor='diabetes'and user_id=userid  group by optimal_values)
+ where names='WH_Women'and user_id=userid;
+ 
+ update op set opt_predict=
+2.469*(select optimal from ascvd where names='lnage'and user_id=userid  group by optimal)
++0.302*(select optimal from ascvd where names='lntot'and user_id=userid  group by optimal)+
+-0.307*(select optimal from ascvd where names='lnhdl'and user_id=userid  group by optimal)+
+1.916*(select optimal from ascvd where names='trlnsbp'and user_id=userid  group by optimal)+
+1.809*(select optimal from ascvd where names='ntrlnsbp'and user_id=userid  group by optimal)+
+0.549*(select optimal_values::int8 from cvd_sample1 where risk_factor='smoker'and user_id=userid  group by optimal_values)+
+0.645*(select optimal_values::int8 from cvd_sample1 where risk_factor='diabetes'and user_id=userid  group by optimal_values)
+ where names='AA_men'and user_id=userid;
+ 
+ 
+ update op set opt_predict=
+12.344*(select optimal from ascvd where names='lnage'and user_id=userid  group by optimal)+
+ 11.853*(select optimal from ascvd where names='lntot'and user_id=userid  group by optimal)+
+ -2.664*(select optimal from ascvd where names='agetc'and user_id=userid  group by optimal)+
+ -7.99*(select optimal from ascvd where names='lnhdl'and user_id=userid  group by optimal)+
+ 1.769*(select optimal from ascvd where names = 'agehdl'and user_id=userid  group by optimal)+
+ 1.797*(select optimal from ascvd where names='trlnsbp'and user_id=userid  group by optimal)+
+ 1.764*(select optimal from ascvd where names='ntrlnsbp'and user_id=userid  group by optimal)+
+ 7.837*(select optimal_values::int8 from cvd_sample1 where risk_factor='smoker'and user_id=userid  group by optimal_values)+
+ -1.795*(select optimal from ascvd where names='agesmoke'and user_id=userid  group by optimal)+
+ 0.658*(select optimal_values::int8 from cvd_sample1 where risk_factor='diabetes'and user_id=userid  group by optimal_values)
+ where names='WH_men'and user_id=userid;
+ update op set opt_cvd_predict=1-(0.95334^(EXP(opt_predict-86.6081)))
+ where names='AA_Women'and user_id=user_id;
+ update op set opt_cvd_predict=1-(0.96652^(EXP(opt_predict-(-29.1817))))
+ where names='WH_Women'and user_id=userid;
+ update op set opt_cvd_predict=1-(0.89536^(EXP(opt_predict-19.5425)))
+ where names='AA_men'and user_id=userid;
+ update op set opt_cvd_predict=1-(0.91436^(EXP(opt_predict-61.1816)))
+ where names='WH_men'and user_id=userid;
+ 
+ loop1 :=loop1+1;
+end LOOP;
+end;
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;	
+update op set sex_race=
+ ( select case when   values='Male' then 1 else 0 end from cvd_sample1 where risk_factor='sex'and user_id=userid
+  group by values,user_id limit 1)*
+ ( select case when   values='AA_Men'then 1 else 0 end from cvd_sample1 where risk_factor='race'and 
+  user_id=userid
+  group by values,user_id limit 1)
+where names='AA_men' and user_id=userid ;
+			   
+	update op set sex_race=
+ ( select case when   values='Male' then 1 else 0 end from cvd_sample1 where risk_factor='sex'and user_id=userid group by values ,user_id limit 1)*
+ ( select case when   values='WH_Men'then 1 else 0 end from cvd_sample1 where risk_factor='race'and user_id=userid group by values,user_id limit 1)
+where names='WH_men' and user_id=userid; 										   
+
+update op set sex_race=
+ ( select case when   values='Female' then 1 else 0 end from cvd_sample1 where risk_factor='sex'and user_id=userid group by values,user_id limit 1)*
+ ( select case when   values='AA_Women'then 1 else 0 end from cvd_sample1 where risk_factor='race'and user_id=userid group by values,user_id limit 1)
+where names='AA_Women' and user_id=userid;
+
+update op set sex_race=
+ ( select case when   values='Female' then 1 else 0 end from cvd_sample1 where risk_factor='sex'and user_id=userid group by values,user_id limit 1)*
+ ( select case when   values='WH_Women'then 1 else 0 end from cvd_sample1 where risk_factor='race'and user_id=userid group by values,user_id limit 1)
+where names='WH_Women' and user_id=userid;
+													   
+loop1 :=loop1+1;
+end LOOP;
+end;
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+update op set ten_year_ascvd = 0;
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;					   
+
+
+update op set ten_year_ascvd=
+(select cvd_predict*sex_race*100 from op where names='AA_Women' AND  user_id=userid  group by sex_race,cvd_predict )
+where names='AA_Women' and user_id=userid and sex_race =1;
+			   update op set ten_year_ascvd=
+(select cvd_predict*sex_race*100 from op where names='AA_men' AND  user_id=userid group by sex_race,cvd_predict)
+where names='AA_men' and user_id=userid and sex_race =1;
+			   update op set ten_year_ascvd=
+(select cvd_predict*sex_race*100 from op where names='WH_Women' AND  user_id=userid group by sex_race,cvd_predict)
+where names='WH_Women' and user_id=userid and sex_race =1;
+			   update op set ten_year_ascvd=
+(select cvd_predict*sex_race*100 from op where names='WH_men' AND  user_id=userid group by sex_race,cvd_predict)
+where names='WH_men' and user_id=userid and sex_race =1;
+update op set opt_ten_year_ascvd=
+(select opt_cvd_predict*sex_race*100 from op where names='AA_Women' AND  user_id=userid group by sex_race,opt_cvd_predict )
+where names='AA_Women' and user_id=userid and sex_race =1;
+			   update op set opt_ten_year_ascvd=
+(select opt_cvd_predict*sex_race*100 from op where names='AA_men' AND  user_id=userid group by sex_race,opt_cvd_predict)
+where names='AA_men' and user_id=userid and sex_race =1;
+			   update op set opt_ten_year_ascvd=
+(select opt_cvd_predict*sex_race*100 from op where names='WH_Women' AND  user_id=userid group by sex_race,opt_cvd_predict)
+where names='WH_Women' and user_id=userid and sex_race =1;
+			   update op set opt_ten_year_ascvd=
+(select opt_cvd_predict*sex_race*100 from op where names='WH_men' AND  user_id=userid group by sex_race,opt_cvd_predict)
+where names='WH_men' and user_id=userid and sex_race =1;
+
+
+
+loop1 :=loop1+1;
+end LOOP;
+end;
+
+
+END;
+$$ LANGUAGE plpgsql;

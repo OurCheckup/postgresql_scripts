@@ -1,0 +1,33 @@
+--select Qjobs15();
+-- select * from initial_3 where user_id = 473 and vital = 'sys'
+CREATE OR REPLACE FUNCTION public.Qjobs15(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+DECLARE Initial_1 numeric(10,2);
+DECLARE  vital_1 character varying(30);
+begin
+drop table d5;
+create table d5 (id int GENERATED ALWAYS AS IDENTITY,user_id int,vital character varying(30));
+insert into d5(user_id,vital)
+select distinct user_id,vital  from final_quarter;
+select count(*) into count1 from d5;
+while (loop1<=(count1)) LOOP
+select user_id into userid from d5 where id=loop1;
+select vital into vital_1 from d5 where id=loop1;
+			   select Initial into Initial_1 from final_quarter where user_id = userid and vital= vital_1;
+			   update Initial_3 set Initial = Initial_1 where user_id = userid and vital= vital_1;
+loop1 :=loop1+1;
+end LOOP;
+end;
+			   $BODY$;
+
+ALTER FUNCTION public.Qjobs15()
+    OWNER TO postgres;

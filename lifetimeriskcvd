@@ -1,0 +1,49 @@
+--select * from lifetimeriskcvd
+--select distinct user_id into u1 from cvd_sample1  
+--select gender,g_value,life_time_cvd,life_time_cvd_optimal,user_id into lifetimeriskcvd from  lifetimeriskascvd cross join u1
+create OR REPLACE FUNCTION cvd_lifetimeriskcvd()
+   RETURNS void as $$
+  BEGIN 
+  
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;	
+
+update lifetimeriskcvd set g_value=
+ ( select case when   values ='M'  then 1 else 0 end from cvd_sample1
+  where risk_factor='sex' and user_id=userid group by values)
+
+where gender='M' and user_id=userid;
+update lifetimeriskcvd set g_value=
+ ( select case when   values ='F'  then 1 else 0 end from cvd_sample1 where risk_factor='sex' and user_id=userid group by values)
+
+where gender='F' and user_id=userid;
+
+update lifetimeriskcvd set life_time_cvd=
+ ( select g_value   from lifetimeriskcvd where gender='M' and user_id = userid group by g_value)*
+ ( select m_values   from ltr1 where men='tot_mem' and user_id = userid group by m_values)+
+ ( select g_value   from lifetimeriskcvd where gender='F' and user_id = userid group by g_value)*
+ ( select W_values   from ltr1 where women='tot_women' and user_id = userid group by w_values)
+			   
+
+where gender='M' and user_id=userid;
+update lifetimeriskcvd set life_time_cvd_optimal=5  where gender='M'and user_id=userid;
+update lifetimeriskcvd set life_time_cvd_optimal=8 where gender='F' and user_id=userid;
+
+ loop1 :=loop1+1;
+end LOOP;
+end;
+END;
+$$ LANGUAGE plpgsql;
+--select cvd_lifetimeriskcvd()	
+			   
+			   
+			   
+			  
+			  

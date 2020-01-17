@@ -1,0 +1,54 @@
+-- select * from initial_3 where user_id = 411
+--select * from final_quarter where user_id = 411 and quarter =1
+--delete from initial_3 where user_id = 411
+--select targetreport_2()
+CREATE OR REPLACE FUNCTION public.targetreport_2(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE loop1 integer:=1; 
+   DECLARE userid integer;
+   DECLARE count1 integer;
+   DECLARE vital_1 character varying(30);
+   declare target_1 numeric(10,2);
+Begin   
+
+drop table  a12;
+create table a12 (id int GENERATED ALWAYS AS IDENTITY,user_id int,vital character varying(30),target numeric(10,2));
+insert into a12 (user_id,vital,target)
+select distinct user_id,vital,target  from initial_3 ;
+select count (*) into count1 from a12 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from a12 where id=loop1;
+select vital into vital_1 from a12 where id=loop1;	
+select target into target_1 from a12 where id=loop1;
+if exists(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=1) then	
+
+update  final_quarter set target=target_1  where user_id = userid and quarter=1 and vital=vital_1  ;
+elsif  exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=2) then	
+
+update  final_quarter set target=target_1  where user_id = userid and quarter=2 and vital=vital_1 ;
+			   elsif  exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=3) then	
+			   
+update  final_quarter set target=target_1  where user_id = userid and quarter=3 and vital=vital_1; 
+			   elsif  exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=4) then	
+
+update  final_quarter set target=target_1  where user_id = userid and quarter=4 and vital=vital_1 ;
+			   end if;
+loop1 :=loop1+1;
+end loop;
+end;
+						 $BODY$;
+
+ALTER FUNCTION public.targetreport_2()
+    OWNER TO postgres;			   
+			   			   			   
+			   

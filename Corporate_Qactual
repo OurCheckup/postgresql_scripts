@@ -1,0 +1,20 @@
+drop table corporate_Actual;
+create table corporate_Actual(vital,values) as
+(select  'sys',sys,quarter,year,user_id, date   from  public."Quaterly_Final"  where quarter = 1  and sys is not null group by sys,quarter,year,user_id,date) 
+union all
+(select  'dia',dia,quarter,year,user_id,date   from  public."Quaterly_Final"   where quarter = 1  and dia is not null group by dia,quarter,year,user_id,date)
+union all
+(select  'bmi',bmi,quarter,year,user_id,date   from  public."Quaterly_Final"  where  quarter = 1 and bmi is not null group by bmi,quarter,year,user_id,date)
+union all
+(select  'fat',fat,quarter,year,user_id,date   from  public."Quaterly_Final" where  quarter = 1  and fat is not null group by fat,quarter,year,user_id,date)
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,date   from  public."Quaterly_Final"  where quarter = 1  and  heart_rate is not null group by heart_rate,quarter,year,user_id,date)
+union all
+(select  'steps',steps,quarter,year,user_id,date   from  public."Quaterly_Final"   where quarter = 1 and  steps is not null group by steps,quarter,year,user_id,date );
+
+
+
+drop table corporate_Actual1;
+create table corporate_Actual1 as
+select vital,values,quarter,year,corporate_Actual.user_id,date,gender from corporate_Actual inner join subscriber_profile on corporate_Actual.user_id = subscriber_profile.user_id;
+

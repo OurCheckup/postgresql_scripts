@@ -1,0 +1,52 @@
+-- FUNCTION: public.qjobs7999()
+--select qjobs7999()
+-- DROP FUNCTION public.qjobs7999();
+
+CREATE OR REPLACE FUNCTION public.qjobs7999(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+DECLARE initial_1 numeric(10,2);
+Declare target_1 numeric(10,2);
+DECLARE  vital_1 character varying(30);
+begin
+drop table yy1;
+create table yy1 (id int GENERATED ALWAYS AS IDENTITY,user_id int,vital character varying(30));
+insert into yy1 (user_id,vital)
+select distinct user_id,vital  from initial_3; 
+select count (*) into count1 from yy1;
+while (loop1<=(count1)) LOOP
+select user_id into userid from yy1 where id=loop1;
+select vital into vital_1 from yy1 where id=loop1;
+			   select initial into initial_1  from initial_3 where user_id = userid and vital= vital_1;
+			   select target into target_1  from initial_3 where user_id = userid and vital= vital_1;
+			  			   
+if exists(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=1) then	
+update final_quarter set initial = initial_1 ,target = target_1 where user_id = userid and quarter = 1 and vital= vital_1;
+elsif  exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=2) then	
+
+update final_quarter set initial = initial_1, target = target_1 where user_id = userid and quarter = 2 and vital= vital_1;
+elsif  exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=3) then	
+			   
+update final_quarter set initial = initial_1 ,target = target_1 where user_id = userid and quarter = 3 and vital= vital_1;
+elsif  exists	
+(select * from final_quarter where user_id=userid and vital=vital_1 and quarter=4) then	
+
+update final_quarter set initial = initial_1 ,target = target_1  where user_id = userid and quarter = 4 and vital= vital_1;
+end if;
+loop1 :=loop1+1;
+end loop;
+end;
+						 $BODY$;
+
+ALTER FUNCTION public.qjobs7999()
+    OWNER TO postgres;

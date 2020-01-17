@@ -1,0 +1,14 @@
+--select  quarterlymain()
+CREATE OR REPLACE FUNCTION quarterlymain()
+   RETURNS void as $$
+   DECLARE "Final_Quarter" varchar(30); 
+   
+	BEGIN
+Drop table final_quarter;
+CREATE TABLE final_quarter AS
+select vital,quarter,year,user_id,initial,target,achieved,performance,Normal_Count,total_count,target_new from public."Quaterly_Pivot" 
+group by vital,quarter,year,user_id,initial,target,achieved,performance,Normal_Count,total_count,target_new;
+END;
+$$ LANGUAGE plpgsql;
+				 
+				 --select * from final_quarter where user_id = 14

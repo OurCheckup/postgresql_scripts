@@ -1,0 +1,927 @@
+
+--select Quarterjobss()
+CREATE OR REPLACE FUNCTION Quarterjobss()
+   RETURNS void as $$
+   BEGIN
+ DECLARE
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from q1 ;
+
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=1 and user_id = userid),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=1 and values >=60 and values<=90 and user_id = userid) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where 
+		   vital='sys' and quarter=1 and user_id = userid  group by vital,user_id),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sys' 
+		   and quarter=1 and values >=60 and values<=90 and user_id = userid   group by user_id,vital,date
+		   order by date desc limit 1)	
+where Vital='sys' and quarter=1 and user_id = userid; 
+						
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=1 and user_id = userid),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=1 and values >=60 and values<=90  and user_id = userid   ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='dia' and quarter=1 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='dia' and quarter=1 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='dia' and quarter=1 and user_id = userid    ; 
+						
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot" 
+				   where vital='pul' and quarter=1 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='pul' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='pul' and quarter=1 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='pul' and quarter=1 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='pul' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=1 and user_id = userid  group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='body_weight' and quarter=1 and values >=60 and values<=90 and user_id = userid   group by vital,date order by date desc limit 1)	
+where Vital='body_weight' and quarter=1 and user_id = userid   ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=1  and user_id = userid   ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=1 and values >=60 and values<=90 and user_id = userid   ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=1 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmi' and quarter=1 and values >=60 and values<=90 and user_id = userid   group by vital,date order by date desc limit 1)	
+where Vital='bmi' and quarter=1  and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=1 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='skeleton' and quarter=1 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='skeleton' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='fat' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='fat' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='fat' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='muscle' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='muscle' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=1 and values >=60 and values<=90 and user_id = userid    ),
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=1 and user_id = userid    group by vital ),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='moisture' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='moisture' and quarter=1 ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=1 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=1and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='visceral_fat' and quarter=1 and values >=60 and values<=90 and user_id = userid     group by vital,date order by date desc limit 1)	
+where Vital='visceral_fat' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=1and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmr' and quarter=1 and values >=60 and values<=90 
+and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='bmr' and quarter=1 ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=1 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bodyage' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='bodyage' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot" 
+				   where vital='heart_rate ' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"
+				  where vital='heart_rate ' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"
+							where vital='heart_rate ' and quarter=1  and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where 
+							Vital='heart_rate ' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='heart_rate ' and quarter=1 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=1 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='heart_rate_real_time ' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='heart_rate_real_time ' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_pressure_up ' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_pressure_up ' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_pressure_down ' and quarter=1 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='blood_pressure_down ' and quarter=1  and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_oxygen ' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_oxygen ' and quarter=1 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=1 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_oxygen_real_time ' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_oxygen_real_time ' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=1 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='ecg' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='ecg' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=1 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='steps' and quarter=1 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='steps' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='steps' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=1 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='spo2' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='spo2' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=1 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sleep_minutes ' and quarter=1 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='sleep_minutes ' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sleep_hours ' and quarter=1 and values >=60 and values<=90  and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='sleep_hours ' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='deep_sleep ' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='deep_sleep ' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='shallow_sleep' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='shallow_sleep' and quarter=1 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='WHR' and quarter=1 and values >=60 and values<=90 and user_id = 14 
+							group by vital,date order by date desc limit 1)	
+where Vital='WHR' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=1 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=1 group by vital and user_id = userid    ),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HBA1C' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='HBA1C' and quarter=1 and user_id = userid     ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HDL_Cholesterol' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='HDL_Cholesterol' and quarter=1 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='LDL_Cholesterol' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='LDL_Cholesterol' and quarter=1 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='Total_Cholesterol' and quarter=1 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='Total_Cholesterol' and quarter=1 and user_id = userid     ; 
+
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=1 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=1 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=1 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='Triglycerides' and quarter=1 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='Triglycerides' and quarter=1  and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=2 and user_id = userid),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=2 and values >=60 and values<=90 and user_id = userid) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where 
+		   vital='sys' and quarter=2 and user_id = userid  group by vital,user_id),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sys' 
+		   and quarter=2 and values >=60 and values<=90 and user_id = userid   group by user_id,vital,date
+		   order by date desc limit 1)	
+where Vital='sys' and quarter=2 and user_id = userid; 
+						
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=2 and user_id = userid),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=2 and values >=60 and values<=90  and user_id = userid   ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='dia' and quarter=2 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='dia' and quarter=2 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='dia' and quarter=2 and user_id = userid    ; 
+						
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot" 
+				   where vital='pul' and quarter=2 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='pul' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='pul' and quarter=2 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='pul' and quarter=2 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='pul' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=2 and user_id = userid  group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='body_weight' and quarter=2 and values >=60 and values<=90 and user_id = userid   group by vital,date order by date desc limit 1)	
+where Vital='body_weight' and quarter=2 and user_id = userid   ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=2  and user_id = userid   ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=2 and values >=60 and values<=90 and user_id = userid   ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=2 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmi' and quarter=2 and values >=60 and values<=90 and user_id = userid   group by vital,date order by date desc limit 1)	
+where Vital='bmi' and quarter=2  and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=2 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='skeleton' and quarter=2 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='skeleton' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='fat' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='fat' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='fat' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='muscle' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='muscle' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=2 and values >=60 and values<=90 and user_id = userid    ),
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=2 and user_id = userid    group by vital ),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='moisture' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='moisture' and quarter=2 ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=2 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=1and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='visceral_fat' and quarter=2 and values >=60 and values<=90 and user_id = userid     group by vital,date order by date desc limit 1)	
+where Vital='visceral_fat' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=1and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmr' and quarter=2 and values >=60 and values<=90 
+and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='bmr' and quarter=2 ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=2 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bodyage' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='bodyage' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot" 
+				   where vital='heart_rate ' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"
+				  where vital='heart_rate ' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"
+							where vital='heart_rate ' and quarter=2  and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where 
+							Vital='heart_rate ' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='heart_rate ' and quarter=2 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=2 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='heart_rate_real_time ' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='heart_rate_real_time ' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_pressure_up ' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_pressure_up ' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_pressure_down ' and quarter=2 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='blood_pressure_down ' and quarter=2  and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_oxygen ' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_oxygen ' and quarter=2 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=2 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_oxygen_real_time ' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_oxygen_real_time ' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=2 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='ecg' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='ecg' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=2 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='steps' and quarter=2 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='steps' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='steps' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=2 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='spo2' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='spo2' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=2 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sleep_minutes ' and quarter=2 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='sleep_minutes ' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sleep_hours ' and quarter=2 and values >=60 and values<=90  and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='sleep_hours ' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='deep_sleep ' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='deep_sleep ' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='shallow_sleep' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='shallow_sleep' and quarter=2 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='WHR' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='WHR' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=2 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=2 group by vital and user_id = userid    ),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HBA1C' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='HBA1C' and quarter=2 and user_id = userid     ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HDL_Cholesterol' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='HDL_Cholesterol' and quarter=2 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='LDL_Cholesterol' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='LDL_Cholesterol' and quarter=2 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='Total_Cholesterol' and quarter=2 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='Total_Cholesterol' and quarter=2 and user_id = userid     ; 
+
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=2 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=2 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=2 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='Triglycerides' and quarter=2 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='Triglycerides' and quarter=2  and user_id = userid    ; 
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=3 and user_id = userid),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=3 and values >=60 and values<=90 and user_id = userid) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where 
+		   vital='sys' and quarter=3 and user_id = userid  group by vital,user_id),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sys' 
+		   and quarter=3 and values >=60 and values<=90 and user_id = userid   group by user_id,vital,date
+		   order by date desc limit 1)	
+where Vital='sys' and quarter=3 and user_id = userid; 
+						
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=3 and user_id = userid),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=3 and values >=60 and values<=90  and user_id = userid   ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='dia' and quarter=3 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='dia' and quarter=3 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='dia' and quarter=3 and user_id = userid    ; 
+						
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot" 
+				   where vital='pul' and quarter=3 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='pul' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='pul' and quarter=3 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='pul' and quarter=3 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='pul' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=3 and user_id = userid  group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='body_weight' and quarter=3 and values >=60 and values<=90 and user_id = userid   group by vital,date order by date desc limit 1)	
+where Vital='body_weight' and quarter=3 and user_id = userid   ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=3  and user_id = userid   ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=3 and values >=60 and values<=90 and user_id = userid   ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=3 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmi' and quarter=3 and values >=60 and values<=90 and user_id = userid   group by vital,date order by date desc limit 1)	
+where Vital='bmi' and quarter=3  and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=3 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='skeleton' and quarter=3 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='skeleton' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='fat' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='fat' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='fat' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='muscle' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='muscle' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=3 and values >=60 and values<=90 and user_id = userid    ),
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=3 and user_id = userid    group by vital ),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='moisture' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='moisture' and quarter=3 ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=3 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=1and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='visceral_fat' and quarter=3 and values >=60 and values<=90 and user_id = userid     group by vital,date order by date desc limit 1)	
+where Vital='visceral_fat' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=1and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmr' and quarter=3 and values >=60 and values<=90 
+and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='bmr' and quarter=3 ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=3 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bodyage' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='bodyage' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot" 
+				   where vital='heart_rate ' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"
+				  where vital='heart_rate ' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"
+							where vital='heart_rate ' and quarter=3  and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where 
+							Vital='heart_rate ' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='heart_rate ' and quarter=3 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=3 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='heart_rate_real_time ' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='heart_rate_real_time ' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_pressure_up ' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_pressure_up ' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_pressure_down ' and quarter=3 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='blood_pressure_down ' and quarter=3  and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_oxygen ' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_oxygen ' and quarter=3 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=3 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_oxygen_real_time ' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_oxygen_real_time ' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=3 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='ecg' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='ecg' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=3 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='steps' and quarter=3 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='steps' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='steps' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=3 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='spo2' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='spo2' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=3 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sleep_minutes ' and quarter=3 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='sleep_minutes ' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sleep_hours ' and quarter=3 and values >=60 and values<=90  and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='sleep_hours ' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='deep_sleep ' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='deep_sleep ' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='shallow_sleep' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='shallow_sleep' and quarter=3 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='WHR' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='WHR' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=3 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=3 group by vital and user_id = userid    ),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HBA1C' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='HBA1C' and quarter=3 and user_id = userid     ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HDL_Cholesterol' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='HDL_Cholesterol' and quarter=3 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='LDL_Cholesterol' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='LDL_Cholesterol' and quarter=3 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='Total_Cholesterol' and quarter=3 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='Total_Cholesterol' and quarter=3 and user_id = userid     ; 
+
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=3 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=3 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=3 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='Triglycerides' and quarter=3 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='Triglycerides' and quarter=3  and user_id = userid    ; 
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=4 and user_id = userid),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=4 and values >=60 and values<=90 and user_id = userid) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where 
+		   vital='sys' and quarter=4 and user_id = userid  group by vital,user_id),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sys' 
+		   and quarter=4 and values >=60 and values<=90 and user_id = userid   group by user_id,vital,date
+		   order by date desc limit 1)	
+where Vital='sys' and quarter=4 and user_id = userid; 
+						
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=4 and user_id = userid),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=4 and values >=60 and values<=90  and user_id = userid   ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='dia' and quarter=4 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='dia' and quarter=4 and values >=60 and values<=90  and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='dia' and quarter=4 and user_id = userid    ; 
+						
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot" 
+				   where vital='pul' and quarter=4 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='pul' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='pul' and quarter=4 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='pul' and quarter=4 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='pul' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=4 and user_id = userid  group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='body_weight' and quarter=4 and values >=60 and values<=90 and user_id = userid   group by vital,date order by date desc limit 1)	
+where Vital='body_weight' and quarter=4 and user_id = userid   ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=4  and user_id = userid   ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=4 and values >=60 and values<=90 and user_id = userid   ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=4 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmi' and quarter=4 and values >=60 and values<=90 and user_id = userid   group by vital,date order by date desc limit 1)	
+where Vital='bmi' and quarter=4  and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=4 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='skeleton' and quarter=4 and values >=60 and values<=90 and user_id = userid    group by vital,date order by date desc limit 1)	
+where Vital='skeleton' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='fat' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='fat' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='fat' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='muscle' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='muscle' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=4 and values >=60 and values<=90 and user_id = userid    ),
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=4 and user_id = userid    group by vital ),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='moisture' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='moisture' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=4 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=1and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='visceral_fat' and quarter=4 and values >=60 and values<=90 and user_id = userid     group by vital,date order by date desc limit 1)	
+where Vital='visceral_fat' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=1and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmr' and quarter=4 and values >=60 and values<=90 
+and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='bmr' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=4 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bodyage' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='bodyage' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot" 
+				   where vital='heart_rate ' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"
+				  where vital='heart_rate ' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"
+							where vital='heart_rate ' and quarter=4  and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where 
+							Vital='heart_rate ' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='heart_rate ' and quarter=4 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=4 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='heart_rate_real_time ' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='heart_rate_real_time ' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='heart_rate_real_time ' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_pressure_up ' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_pressure_up ' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_pressure_up ' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_pressure_down ' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_pressure_down ' and quarter=4 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='blood_pressure_down ' and quarter=4  and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_oxygen ' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_oxygen ' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_oxygen ' and quarter=4 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=4 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='blood_oxygen_real_time ' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='blood_oxygen_real_time ' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='blood_oxygen_real_time ' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=4 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='ecg' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='ecg' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=4 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='steps' and quarter=4 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='steps' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='steps' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=4 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='spo2' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='spo2' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='sleep_minutes ' and quarter=4 and user_id = userid    group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sleep_minutes ' and quarter=4 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='sleep_minutes ' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='sleep_hours ' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sleep_hours ' and quarter=4 and values >=60 and values<=90  and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='sleep_hours ' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='deep_sleep ' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='deep_sleep ' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='deep_sleep ' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='shallow_sleep' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='shallow_sleep' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='shallow_sleep' and quarter=4 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='WHR' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='WHR' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=4 and user_id = userid    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=4 group by vital and user_id = userid    ),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HBA1C' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='HBA1C' and quarter=4 and user_id = userid     ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HDL_Cholesterol' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='HDL_Cholesterol' and quarter=4 and user_id = userid     ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='LDL_Cholesterol' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='LDL_Cholesterol' and quarter=4 and user_id = userid    ; 
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='Total_Cholesterol' and quarter=4 and values >=60 and values<=90 and user_id = userid      group by vital,date order by date desc limit 1)	
+where Vital='Total_Cholesterol' and quarter=4 and user_id = userid     ; 
+
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=4 and user_id = userid    ),
+  Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=4 and values >=60 and values<=90 and user_id = userid    ) ,
+Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=4 and user_id = userid     group by vital),
+achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='Triglycerides' and quarter=4 and values >=60 and values<=90 and user_id = userid       group by vital,date order by date desc limit 1)	
+where Vital='Triglycerides' and quarter=4  and user_id = userid    ; 
+						
+loop1 :=loop1+1;
+end LOOP;
+end;
+
+END;
+$$ LANGUAGE plpgsql;

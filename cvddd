@@ -1,0 +1,109 @@
+--select * from ascvd where user_id = 411
+--alter table ascvd2 alter optimal type numeric(15,9) 
+--SELECT cvd_env()
+--update ascvd set enter_value = 0.00,optimal = 0.00 where 
+--select *  from cvd_sample1 where  user_id=411 group by values,user_id limit 1)
+--where names='lntot' and user_id=userid;
+create OR REPLACE FUNCTION cvd_env()
+RETURNS void as $$
+BEGIN 
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+update ascvd set enter_value = 0.00,optimal = 0.00;
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;			   
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end from
+ cvd_sample1 where risk_factor='age' and user_id=userid group by values,user_id limit 1)
+where names='lnage' and user_id=userid;
+			   
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where 
+																			risk_factor='Total_Cholesterol' and user_id=userid group by values,user_id limit 1)
+where names='lntot' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='HDL_Cholesterol' and user_id=userid group by values,user_id limit 1)
+where names='lnhdl' and user_id=userid;
+
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(10,2))*(select yn from cvd_sample1 where risk_factor ='treatement_for_high_blood_pressure' and user_id = userid  )  end 
+ from cvd_sample1 where risk_factor='sys' and user_id=userid group by values,yn,user_id limit 1)
+where names='trlnsbp' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) *yn 
+ end from cvd_sample1 where risk_factor='sys' and user_id=411 group by yn,values,user_id limit 1)
+where names='ntlnsbp' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) * ln(values::decimal(15,9)) end from cvd_sample1 where risk_factor='age' and user_id=userid group by values,user_id limit 1)
+where names='age2' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='Total_Cholesterol' and user_id=userid group by values,user_id limit 1)
+where names='agetc' and user_id=userid;
+
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='age' and user_id=userid group by values limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='HDL_Cholesterol' and user_id=userid group by values,user_id limit 1)
+where names='agehdl' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='age' and user_id=userid group by values,user_id limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  
+																					from cvd_sample1 where risk_factor='sys'
+																					and user_id=userid group by values,user_id limit 1)*
+(select yn from cvd_sample1 where risk_factor='treatement_for_high_blood_pressure' and user_id=userid group by yn limit 1 )
+where names='agetsbp' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end 
+																					from cvd_sample1 where risk_factor='age'
+																					and user_id=userid
+																					group by values,user_id limit 1)*
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) *yn 
+ end from cvd_sample1 where risk_factor='sys' and user_id=userid group by yn,values,user_id limit 1)
+where names='agentsbp' and user_id=userid;
+
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  from cvd_sample1 where risk_factor='age' and user_id=userid group by values,user_id limit 1)*
+(select yn from cvd_sample1 where risk_factor='smoker' and user_id=userid group by yn limit 1)
+where names='agesmoke' and user_id=userid;
+
+update ascvd set enter_value=
+(select case when values= '0.00' then values::decimal(15,9) else ln(values::decimal(15,9)) end  
+																					from cvd_sample1 where
+																					risk_factor='age' and user_id=userid 
+																					group by values,user_id limit 1)*
+(select yn from cvd_sample1 where risk_factor='diabetes' and user_id=userid group by yn limit 1)
+where names='agedm' and user_id=userid;
+loop1 :=loop1+1;
+end LOOP;
+end;
+
+END;
+$$ LANGUAGE plpgsql;
+		   
+--select cvd_env();
+--select * from cvd_sample1
+
+	   
+--drop table u1	;		  
+--create table u1 (id int GENERATED ALWAYS AS IDENTITY,user_id int)	
+--insert into u1 (user_id) select distinct user_id  from cvd_sample1
+--drop table ascvd			   
+--select names,enter_value,optimal,user_id into ascvd from ascvd2 cross join u1
+			   
+			   --select * from cvd_sample1
+		   

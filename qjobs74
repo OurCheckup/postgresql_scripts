@@ -1,0 +1,36 @@
+--select qjobs74()
+--select * from initial_3 where user_id = 750
+--select * from device_details where user_id = 736
+
+CREATE OR REPLACE FUNCTION public.qjobs74(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+begin
+drop table ss7;
+create table ss7 (id int GENERATED ALWAYS AS IDENTITY,user_id int);
+insert into ss7 (user_id)
+select distinct user_id  from public."Quaterly_Final" ;
+select count(*) into count1 from ss7;
+while (loop1<=(count1)) LOOP
+select user_id into userid from ss7 where id=loop1;
+			   update initial_3 set 
+			   Initial = ( select sum(steps) from public."Quaterly_Final" where date = 
+		   (select min(date) from public."Quaterly_Final" where user_id = userid and steps is not null limit 1)	
+					    and user_id = userid and steps is not null limit 1) where user_id = userid and vital = 'steps';
+			
+													 
+loop1 :=loop1+1;
+end LOOP;
+			 end;
+			   $BODY$;
+
+ALTER FUNCTION public.qjobs74()
+    OWNER TO postgres;

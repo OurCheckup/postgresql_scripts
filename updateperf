@@ -1,0 +1,8 @@
+update final_quarter set performance=(initial-achieved)/(initial-target)*100 where 
+vital in ('body_weight','bmi','bmr','visceral_fat','muscle','moisture','body_age','fat');
+update final_quarter set performance=case when total_count <> 0.00 then (normal_count)/(total_count)*100 else 0 end where
+vital in ('sys','dia','heart_rate');
+update final_quarter set performance=case when total_count <> 0.00 then (normal_count)/(total_count)*100 else 0 end where
+vital ='steps';
+update final_quarter set performance=case when target <> 0.00 then (target-achieved)/(target)*100 else 0 end where
+vital in ('HDL_Cholesterol','Total_Cholesterol','LDL_Cholesterol','HBA1C','WHR','Triglycerides');

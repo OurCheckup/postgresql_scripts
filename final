@@ -1,0 +1,194 @@
+--select final()
+CREATE OR REPLACE FUNCTION final()
+   RETURNS void as $$
+   DECLARE
+   BEGIN
+ 
+ 
+ update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='WHR' and quarter=1)
+where Vital='WHR ' and quarter=1 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='HBA1C' and quarter=1)
+where Vital='HBA1C ' and quarter=1 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='HDL_Cholesterol' and quarter=1)
+where Vital='HDL_Cholesterol ' and quarter=1 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='LDL_Cholesterol' and quarter=1)
+where Vital='LDL_Cholesterol ' and quarter=1 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='Total_Cholesterol' and quarter=1)
+where Vital='Total_Cholesterol' and quarter=1 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='Triglycerides' and quarter=1)
+where Vital='Triglycerides ' and quarter=1 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='WHR' and quarter=1 and initial >=60 and initial<=90)
+where Vital='WHR' and quarter=1 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='HBA1C' and quarter=1 and initial >=60 and initial<=90)
+where Vital='HBA1C' and quarter=1 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='HDL_Cholesterol' and quarter=1 and initial >=60 and initial<=90)
+where Vital='HDL_Cholesterol' and quarter=1 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='LDL_Cholesterol' and quarter=1 and initial >=60 and initial<=90)
+where Vital='LDL_Cholesterol' and quarter=1 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='Total_Cholesterol' and quarter=1 and initial >=60 and initial<=90)
+where Vital='Total_Cholesterol' and quarter=1 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='Triglycerides' and quarter=1 and initial >=60 and initial<=90)
+where Vital='Triglycerides' and quarter=1 ;
+
+
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='WHR' and quarter=2)
+where Vital='WHR ' and quarter=2 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='HBA1C' and quarter=2)
+where Vital='HBA1C ' and quarter=2 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='HDL_Cholesterol' and quarter=2)
+where Vital='HDL_Cholesterol ' and quarter=2 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='LDL_Cholesterol' and quarter=2)
+where Vital='LDL_Cholesterol ' and quarter=2 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='Total_Cholesterol' and quarter=2)
+where Vital='Total_Cholesterol' and quarter=2 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='Triglycerides' and quarter=2)
+where Vital='Triglycerides ' and quarter=2 ;
+
+
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='sys' and quarter=2 and initial >=60 and initial<=90)
+where Vital='sys' and quarter=2 ;
+
+
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='WHR' and quarter=3)
+where Vital='WHR ' and quarter=3 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='HBA1C' and quarter=3)
+where Vital='HBA1C ' and quarter=3 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='HDL_Cholesterol' and quarter=3)
+where Vital='HDL_Cholesterol ' and quarter=3 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='LDL_Cholesterol' and quarter=3)
+where Vital='LDL_Cholesterol ' and quarter=3 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='Total_Cholesterol' and quarter=3)
+where Vital='Total_Cholesterol' and quarter=3 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='Triglycerides' and quarter=3)
+where Vital='Triglycerides ' and quarter=3 ;
+
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='WHR' and quarter=3 and initial >=60 and initial<=90)
+where Vital='WHR' and quarter=3 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='HBA1C' and quarter=3 and initial >=60 and initial<=90)
+where Vital='HBA1C' and quarter=3 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='HDL_Cholesterol' and quarter=3 and initial >=60 and initial<=90)
+where Vital='HDL_Cholesterol' and quarter=3 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='LDL_Cholesterol' and quarter=3 and initial >=60 and initial<=90)
+where Vital='LDL_Cholesterol' and quarter=3 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='Total_Cholesterol' and quarter=3 and initial >=60 and initial<=90)
+where Vital='Total_Cholesterol' and quarter=3 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='Triglycerides' and quarter=3 and initial >=60 and initial<=90)
+where Vital='Triglycerides' and quarter=3 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='WHR' and quarter=4)
+where Vital='WHR ' and quarter=4 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='HBA1C' and quarter=4)
+where Vital='HBA1C ' and quarter=4 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='HDL_Cholesterol' and quarter=4)
+where Vital='HDL_Cholesterol ' and quarter=4 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='LDL_Cholesterol' and quarter=4)
+where Vital='LDL_Cholesterol ' and quarter=4 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='Total_Cholesterol' and quarter=4)
+where Vital='Total_Cholesterol' and quarter=4 ;
+
+update final_quarter 
+set total_count = (SELECT count(initial) FROM final_quarter  where vital='Triglycerides' and quarter=4)
+where Vital='Triglycerides ' and quarter=4 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='WHR' and quarter=4 and initial >=60 and initial<=90)
+where Vital='WHR' and quarter=4 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  
+					where vital='HBA1C' and quarter=4 and initial >=60 
+					and initial<=90)
+where Vital='HBA1C' and quarter=4 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter 
+					where vital='HDL_Cholesterol' and quarter=4 and initial >=60 and initial<=90)
+where Vital='HDL_Cholesterol' and quarter=4 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='LDL_Cholesterol' and quarter=4 and initial >=60 and initial<=90)
+where Vital='LDL_Cholesterol' and quarter=4 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter  where vital='Total_Cholesterol' and quarter=4 and initial >=60 and initial<=90)
+where Vital='Total_Cholesterol' and quarter=4 ;
+
+update final_quarter 
+set Normal_Count = (SELECT count(Normal_Count) FROM final_quarter 
+					where vital='Triglycerides' and quarter=4 and 
+					initial >=60 and initial<=90)
+where Vital='Triglycerides' and quarter=4 ;
+
+end;
+$$ LANGUAGE plpgsql;
+					

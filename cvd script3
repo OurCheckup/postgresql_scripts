@@ -1,0 +1,6 @@
+drop table u1
+create table u1 (id int GENERATED ALWAYS AS IDENTITY,user_id int)
+insert into u1 (user_id)
+select distinct user_id  from public."Quaterly_Pivot" 
+select names,enter_value,optimal,user_id from ascvd cross join u1
+

@@ -1,0 +1,38 @@
+--select qjobs76()
+--select * from initial_3 where user_id = 732
+--select * from device_details where user_id = 736
+
+CREATE OR REPLACE FUNCTION public.qjobs76(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+begin
+drop table ss8;
+create table ss8 (id int GENERATED ALWAYS AS IDENTITY,user_id int);
+insert into ss8 (user_id)
+select distinct user_id  from public."Quaterly_Final" ;
+select count(*) into count1 from ss8;
+while (loop1<=(count1)) LOOP
+select user_id into userid from ss8 where id=loop1;
+			   update Initial_3 set Initial = (SELECT bmi  FROM public."Quaterly_Final"   where date = 
+		   (select min(date) from public."Quaterly_Final" where user_id = userid and bmi is not null limit 1)
+											   and  user_id = userid and bmi is not null and bmi<>0  limit 1)
+	   where user_id = userid and vital = 'bmi';
+			
+				 
+loop1 :=loop1+1;
+end LOOP;
+			 end;
+			   $BODY$;
+
+ALTER FUNCTION public.qjobs76()
+    OWNER TO postgres;
+			   
+			 

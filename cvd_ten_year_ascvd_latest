@@ -1,0 +1,66 @@
+--select * from op where  user_id = 411
+--select cvd_ten_year_ascvd();
+create OR REPLACE FUNCTION cvd_ten_year_ascvd()
+RETURNS void as $$ 
+Begin
+declare 
+loop1 integer :=1;
+count1 integer;
+userid integer;
+begin
+select count (*) into count1 from u1 ;
+update op set ten_year_ascvd = 0;
+while (loop1<=(count1)) LOOP
+select user_id into userid from u1 where id=loop1;					   
+
+
+update op set ten_year_ascvd=
+(select cvd_predict*sex_race*100 from op where names='AA_Women' AND  user_id=userid  group by sex_race,cvd_predict )
+where names='AA_Women' and user_id=userid and sex_race =1;
+			   update op set ten_year_ascvd=
+(select cvd_predict*sex_race*100 from op where names='AA_men' AND  user_id=userid group by sex_race,cvd_predict)
+where names='AA_men' and user_id=userid and sex_race =1;
+			   update op set ten_year_ascvd=
+(select cvd_predict*sex_race*100 from op where names='WH_Women' AND  user_id=userid group by sex_race,cvd_predict)
+where names='WH_Women' and user_id=userid and sex_race =1;
+			   update op set ten_year_ascvd=
+(select cvd_predict*sex_race*100 from op where names='WH_men' AND  user_id=userid group by sex_race,cvd_predict)
+where names='WH_men' and user_id=userid and sex_race =1;
+update op set opt_ten_year_ascvd=
+(select opt_cvd_predict*sex_race*100 from op where names='AA_Women' AND  user_id=userid group by sex_race,opt_cvd_predict )
+where names='AA_Women' and user_id=userid and sex_race =1;
+			   update op set opt_ten_year_ascvd=
+(select opt_cvd_predict*sex_race*100 from op where names='AA_men' AND  user_id=userid group by sex_race,opt_cvd_predict)
+where names='AA_men' and user_id=userid and sex_race =1;
+			   update op set opt_ten_year_ascvd=
+(select opt_cvd_predict*sex_race*100 from op where names='WH_Women' AND  user_id=userid group by sex_race,opt_cvd_predict)
+where names='WH_Women' and user_id=userid and sex_race =1;
+			   update op set opt_ten_year_ascvd=
+(select opt_cvd_predict*sex_race*100 from op where names='WH_men' AND  user_id=userid group by sex_race,opt_cvd_predict)
+where names='WH_men' and user_id=userid and sex_race =1;
+
+
+
+loop1 :=loop1+1;
+end LOOP;
+end;
+
+END;
+$$ LANGUAGE plpgsql;
+
+			   -- update op set ten_year_ascvd = 0 where 
+
+ 													   
+													   
+													   
+													   
+													   
+													   
+		
+
+
+ 
+ 
+ 
+ 
+ 

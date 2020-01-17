@@ -1,0 +1,119 @@
+--select Qactual()
+create OR REPLACE FUNCTION Qactual()
+RETURNS void as $$ 
+Begin
+drop table corporate_Actual;
+create table corporate_Actual(vital,values) as
+(select  'sys',sys,quarter,year,user_id, date   from  public."Quaterly_Final"  where quarter = 1  and sys is not null group by sys,quarter,year,user_id,date) 
+union all
+(select  'dia',dia,quarter,year,user_id,date   from  public."Quaterly_Final"   where quarter = 1  and dia is not null group by dia,quarter,year,user_id,date)
+union all
+(select  'bmi',bmi,quarter,year,user_id,date   from  public."Quaterly_Final"  where  quarter = 1 and bmi is not null group by bmi,quarter,year,user_id,date)
+union all
+(select  'fat',fat,quarter,year,user_id,date   from  public."Quaterly_Final" where  quarter = 1  and fat is not null group by fat,quarter,year,user_id,date)
+union all
+(select  'heart_rate',heart_rate,quarter,year,user_id,date   from  public."Quaterly_Final"  where quarter = 1  and  heart_rate is not null group by heart_rate,quarter,year,user_id,date)
+union all
+(select  'steps',steps,quarter,year,user_id,date   from  public."Quaterly_Final"   where quarter = 1 and  steps is not null group by steps,quarter,year,user_id,date );
+drop table corporate_Actual1;
+create table corporate_Actual1 as
+select vital,values,quarter,year,corporate_Actual.user_id,date,gender from corporate_Actual inner join subscriber_profile on corporate_Actual.user_id = subscriber_profile.user_id;
+drop table Corporate_Actual2;
+create table Corporate_Actual2(Keywords,vital,count) as
+select 'heart_rate','% within normal range (60-100)', count (*) from corporate_Actual1 where vital = 'heart_rate' and values between 60 and 90  
+union all
+select 'Blood_pressure','% normal range', count (*) from corporate_Actual1 where vital = 'sys' and values between 90 and 130
+union all
+select 'Blood_pressure','% borderline', count (*) from corporate_Actual1 where vital = 'sys' and values between 130 and 140
+union all
+select 'Blood_pressure','% High', count (*) from corporate_Actual1 where vital = 'sys' and values between 140 and 160
+union all
+select 'Blood_pressure','% Dangerous Level', count (*) from corporate_Actual1 where vital = 'sys' and values  >160
+union all
+select 'Blood_pressure','% normal range', count (*) from corporate_Actual1 where vital = 'dia' and values between 60 and 85
+union all
+select 'Blood_pressure','% borderline', count (*) from corporate_Actual1 where vital = 'dia' and values between 85 and 90
+union all
+select 'Blood_pressure','% High', count (*) from corporate_Actual1 where vital = 'dia' and values between 90 and 100
+union all
+select 'Blood_pressure','% Dangerous Level', count (*) from corporate_Actual1 where vital = 'dia' and values >100
+union all
+select 'Body_Mass_Index','% underweight', count (*) from corporate_Actual1 where vital = 'bmi' and values < 18.5
+union all
+select 'Body_Mass_Index','% Normal', count (*) from corporate_Actual1 where vital = 'bmi' and values between 18.5 and 24.9
+union all
+select 'Body_Mass_Index','% Overweight', count (*) from corporate_Actual1 where vital = 'bmi' and values between 25.0 and 30.0
+union all
+select 'Body_Mass_Index','% Obese', count (*) from corporate_Actual1 where vital = 'bmi' and values >30
+union all
+select 'Total_Body_Fat','% Fit', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Male' and values < 17
+union all
+select 'Total_Body_Fat','% Normal', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Male' and values between 18 and 25
+union all
+select 'Total_Body_Fat','% obese', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Male' and values > 25
+union all
+select 'Total_Body_Fat','% Fit', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Female' and values <24
+union all
+select 'Total_Body_Fat','% Normal', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Female' and values between 25 and 31
+union all
+select 'Total_Body_Fat','% obese', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Female' and values > 32
+union all
+select 'Average_Steps_Taken','% >= 10000', count (*) from corporate_Actual1 where vital = 'steps' and values >=10000
+union all
+select 'Average_Steps_Taken','% <= 5000', count (*) from corporate_Actual1 where vital = 'steps' and values <=5000;
+drop table corporate_Atotal;
+create table corporate_Atotal(Keywords,vital,tot_count) as
+select 'heart_rate','% within normal range (60-100)', count (*) from corporate_Actual1 where vital = 'heart_rate'  
+union all
+select 'Blood_Pressure','% normal range', count (*) from corporate_Actual1 where vital = 'sys'
+union all
+select 'Blood_Pressure','% borderline', count (*) from corporate_Actual1 where vital = 'sys' 
+union all
+select 'Blood_Pressure','% High', count (*) from corporate_Actual1 where vital = 'sys'
+union all
+select 'Blood_Pressure','% Dangerous Level', count (*) from corporate_Actual1 where vital = 'sys' 
+union all
+select 'Blood_Pressure','% normal range', count (*) from corporate_Actual1 where vital = 'dia' 
+union all
+select 'Blood_Pressure','% borderline', count (*) from corporate_Actual1 where vital = 'dia'
+union all
+select 'Blood_Pressure','% High', count (*) from corporate_Actual1 where vital = 'dia'
+union all
+select 'Blood_Pressure','% Dangerous Level', count (*) from corporate_Actual1 where vital = 'dia' 
+union all
+select  'Body_Mass_Index','% underweight', count (*) from corporate_Actual1 where vital = 'bmi' 
+union all
+select  'Body_Mass_Index','% Normal', count (*) from corporate_Actual1 where vital = 'bmi' 
+union all
+select  'Body_Mass_Index','% Overweight', count (*) from corporate_Actual1 where vital = 'bmi' 
+union all
+select  'Body_Mass_Index','% Obese', count (*) from corporate_Actual1 where vital = 'bmi' 
+union all
+select 'Total_Body_Fat','% Fit', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Male' 
+union all
+select 'Total_Body_Fat','% Normal', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Male'
+union all
+select 'Total_Body_Fat','% obese', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Male'
+union all
+select 'Total_Body_Fat','% Fit', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Female' 
+union all
+select 'Total_Body_Fat','% Normal', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Female' 
+union all
+select 'Total_Body_Fat','% obese', count (*) from corporate_Actual1 where vital = 'fat' and gender = 'Female' 
+union all
+select 'Average_Steps_Taken','% >= 10000', count (*) from corporate_Actual1 where vital = 'steps' 
+union all
+select 'Average_Steps_Taken','% <= 5000', count (*) from corporate_Actual1 where vital = 'steps';
+drop table Corporate_Actual4;
+create table Corporate_Actual4 as
+select keywords ,vital,sum(count) as Acount from Corporate_Actual2 group by keywords,vital order by keywords;
+drop table Corporate_Atotal5;
+create table Corporate_Atotal5 as
+select keywords ,vital,sum(tot_count) as Atot_count from corporate_Atotal group by keywords,vital order by keywords;
+drop table corporate_Actualf;
+create table corporate_Actualf as
+select Corporate_Actual4.keywords,Corporate_Actual4.vital,Corporate_Actual4.Acount,Corporate_Atotal5.Atot_count,case when Corporate_Atotal5.Atot_count =  0 then 0 else  (Corporate_Actual4.Acount/Corporate_Atotal5.Atot_count)*100 end as Actual from Corporate_Actual4 inner join Corporate_Atotal5  on Corporate_Actual4.vital = Corporate_Atotal5 .vital
+group by  Corporate_Actual4.keywords,Corporate_Actual4.vital,Corporate_Actual4.Acount,Corporate_Atotal5.Atot_count order by corporate_Actual4.keywords;
+END;
+$$ LANGUAGE plpgsql;
+

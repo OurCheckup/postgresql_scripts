@@ -1,0 +1,266 @@
+CREATE OR REPLACE FUNCTION teq()
+   RETURNS void as $$
+	BEGIN
+	update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='heart_rate' and quarter=4)
+where Vital='sys' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=4)
+where Vital='dia' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=4)
+where Vital='sys' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=4)
+where Vital='body_weight' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=4)
+where Vital='bmi' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=4)
+where Vital='skeleton' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=4)
+where Vital='fat' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=4)
+where Vital='muscle' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=4)
+where Vital='moisture' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='visceral_fat ' and quarter=4)
+where Vital='visceral_fat ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bmr ' and quarter=4)
+where Vital='bmr ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=4)
+where Vital='bodyage ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=4)
+where Vital='ecg ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=4)
+where Vital='steps ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='calories_burt ' and quarter=4)
+where Vital='calories_burt  ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=4)
+where Vital='spo2 ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=4)
+where Vital='WHR ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=4)
+where Vital='HBA1C ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=4)
+where Vital='HDL_Cholesterol ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=4)
+where Vital='LDL_Cholesterol ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=4)
+where Vital='Total_Cholesterol' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=4)
+where Vital='Triglycerides ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='sys' and quarter=4 and values >=60 and values<=90)
+where Vital='sys' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='dia' and quarter=4 and values >=60 and values<=90)
+where Vital='dia' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=4 and values >=60 and values<=90)
+where Vital='body_weight' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot" 
+					where vital='heart_rate' and quarter=4 and values >=60 and values<=90)
+where Vital='heart_rate' and quarter=4 ; 
+
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=4 and values >=60 and values<=90)
+where Vital='bmi' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=4 and values >=60 and values<=90)
+where Vital='bmr' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=4 and values >=60 and values<=90)
+where Vital='spo2' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='skeleton' and quarter=4 and values >=60 and values<=90)
+where Vital='skelton' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=4 and values >=60 and values<=90)
+where Vital='muscle' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='fat' and quarter=4 and values >=60 and values<=90)
+where Vital='fat' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='muscle' and quarter=4 and values >=60 and values<=90)
+where Vital='muscle' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='moisture' and quarter=4 and values >=60 and values<=90)
+where Vital='moisture' and quarter=4 ; 
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='visceral_fat' and quarter=4 and values >=60 and values<=90)
+where Vital='visceral_fat ' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='ecg' and quarter=4 and values >=60 and values<=90)
+where Vital='ecg' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=4 and values >=60 and values<=90)
+where Vital='steps' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=4 and values >=60 and values<=90)
+where Vital='WHR' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=4 and values >=60 and values<=90)
+where Vital='HBA1C' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=4 and values >=60 and values<=90)
+where Vital='HDL_Cholesterol' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=4 and values >=60 and values<=90)
+where Vital='LDL_Cholesterol' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=4 and values >=60 and values<=90)
+where Vital='Total_Cholesterol' and quarter=4 ;
+
+update public."Quaterly_Pivot" 
+set Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='Triglycerides' and quarter=4 and values >=60 and values<=90)
+where Vital='Triglycerides' and quarter=4 ;
+
+--SYS
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='sys' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='sys' and quarter=4 and values >=60 and values<=90   group by vital,date order by date desc limit 1)	
+where Vital='sys' and quarter=4 ; 
+--dia
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='dia' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='dia' and quarter=4 and values >=60 and values<=90   group by vital,date order by date desc limit 1)	
+where Vital='dia' and quarter=4 ; 
+--body_weight
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='body_weight' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='body_weight' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='body_weight' and quarter=4;
+--heart_rate
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='heart_rate' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='heart_rate' and quarter=4 and values >=60 and values<=90   group by vital,date order by date desc limit 1)	
+where Vital='heart_rate' and quarter=4 ; 
+--bmi
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmi' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmi' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='bmi' and quarter=4;
+--bmr
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bmr' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bmr' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='bmr' and quarter=4;
+--visceral_fat
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='visceral_fat ' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='visceral_fat ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='visceral_fat ' and quarter=4;
+--skeleton
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='skeleton ' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='skeleton ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='skeleton ' and quarter=4;
+--muscle
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='muscle ' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='muscle ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='muscle ' and quarter=4;
+--bodyage
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='bodyage' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='bodyage ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='bodyage ' and quarter=4;
+--fat
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='fat' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='fat ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='fat ' and quarter=4;
+--spo2
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='spo2' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='spo2' and quarter=4 and values >=60 and values<=90   group by vital,date order by date desc limit 1)	
+where Vital='spo2' and quarter=4 ; 
+--whr
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='WHR' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='WHR ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='WHR ' and quarter=4;
+--hbac1
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HBA1C' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HBA1C ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='HBA1C ' and quarter=4;
+--HDL_Cholesterol
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='HDL_Cholesterol' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='HDL_Cholesterol ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='HDL_Cholesterol ' and quarter=4;
+--LDL_Cholesterol
+update public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='LDL_Cholesterol' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='LDL_Cholesterol ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='LDL_Cholesterol ' and quarter=4;
+--Total_Cholesterol
+update   public."Quaterly_Pivot" 
+set Initial = (SELECT ROUND(avg(values))  FROM public."Quaterly_Pivot"  where vital='Total_Cholesterol' and quarter=4 group by vital),
+    achieved= (select ROUND(avg(values))  FROM public."Quaterly_Pivot" where Vital='Total_Cholesterol ' and quarter=4   group by vital,date order by date desc limit 1)	
+where Vital='Total_Cholesterol ' and quarter=4;
+END;
+$$ LANGUAGE plpgsql;
+		
+   --select teq()

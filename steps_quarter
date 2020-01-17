@@ -1,0 +1,56 @@
+--select * from public."Quaterly_Final"
+--select qjobs73()
+--select * from public."Quaterly_Pivot"  where user_id = 411 and vital = 'steps'
+CREATE OR REPLACE FUNCTION public.qjobs73(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+begin
+drop table ss4;
+create table ss4 (id int GENERATED ALWAYS AS IDENTITY,user_id int);
+insert into ss4 (user_id)
+select distinct user_id  from public."Quaterly_Final" ;
+select count(*) into count1 from ss4;
+while (loop1<=(count1)) LOOP
+select user_id into userid from ss4 where id=loop1;
+			   update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=1 and user_id = userid and values is not null and values<>0   group by user_id,vital    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=1 and values is not null and values<>0   and values >=60 and values<=90 and user_id = userid group by user_id,vital    ) ,
+Initial = ( select sum(steps) from public."Quaterly_Final" where date(date) = (select min(date(date)) from public."Quaterly_Final" where quarter =1 and user_id = userid and steps is not null)	and quarter =1 and user_id = userid and steps is not null),														 
+achieved= (select sum(steps) from public."Quaterly_Final" where date(date) = (select max(date(date)) from public."Quaterly_Final" where quarter =1 and user_id = userid and steps is not null)	and quarter =1 and user_id = userid and steps is not null) where user_id = user_id and quarter =1 and vital = 'steps';														 
+						
+						
+						update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=2 and user_id = userid and values is not null and values<>0   group by user_id,vital    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=2 and values is not null and values<>0   and values >=60 and values<=90 and user_id = userid group by user_id,vital    ) ,
+Initial = (select sum(steps) from public."Quaterly_Final" where date(date) = (select min(date(date)) from public."Quaterly_Final" where quarter =2 and user_id = userid and steps is not null)	and quarter =2 and user_id = userid and steps is not null),														 
+achieved= (select sum(steps) from public."Quaterly_Final" where date(date) = (select max(date(date)) from public."Quaterly_Final" where quarter =2 and user_id = userid and steps is not null)	and quarter =2 and user_id = userid and steps is not null) where user_id = user_id and quarter =2 and vital = 'steps';														 
+						
+						
+						update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=3 and user_id = userid and values is not null and values<>0   group by user_id,vital),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=3 and values is not null and values<>0   and values >=60 and values<=90 and user_id = userid group by user_id,vital) ,
+Initial =  (select sum(steps) from public."Quaterly_Final" where date(date) = (select min(date(date)) from public."Quaterly_Final" where quarter =3 and user_id = userid and steps is not null)	and quarter =3 and user_id = userid and steps is not null),														 
+achieved= (select sum(steps) from public."Quaterly_Final" where date(date) = (select max(date(date)) from public."Quaterly_Final" where quarter =3 and user_id = userid and steps is not null)	and quarter =3 and user_id = userid and steps is not null) where user_id = user_id and quarter =3 and vital = 'steps';														 
+						
+						
+						update public."Quaterly_Pivot" 
+set total_count = (SELECT count(values) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=4 and user_id = userid and values is not null and values<>0   group by user_id,vital    ),
+ Normal_Count = (SELECT count(Normal_Count) FROM public."Quaterly_Pivot"  where vital='steps' and quarter=4 and values is not null and values<>0   and values >=60 and values<=90 and user_id = userid group by user_id,vital    ) ,
+Initial =  (select sum(steps) from public."Quaterly_Final" where date(date) = (select min(date(date)) from public."Quaterly_Final" where quarter =4 and user_id = userid and steps is not null)	and quarter =4 and user_id = userid and steps is not null),														 
+achieved= (select sum(steps) from public."Quaterly_Final" where date(date) = (select max(date(date)) from public."Quaterly_Final" where quarter =4 and user_id = userid and steps is not null)	and quarter =4 and user_id = userid and steps is not null) where user_id = user_id and quarter =4 and vital = 'steps';														 
+										 
+																		 loop1 :=loop1+1;
+			   end LOOP;
+end;
+			   $BODY$;
+
+ALTER FUNCTION public.qjobs73()
+    OWNER TO postgres;

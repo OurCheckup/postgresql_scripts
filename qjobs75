@@ -1,0 +1,43 @@
+--select qjobs75()
+--select * from final_quarter where user_id=742
+--se
+--select * from device_details where date::date  = '2019-08-02'
+--select * from public."Quaterly_Final" where user_id=524
+
+CREATE OR REPLACE FUNCTION public.qjobs75(
+	)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+   DECLARE count1 integer;
+DECLARE userid integer;
+DECLARE loop1 integer:=1;
+begin
+drop table ss9;
+create table ss9 (id int GENERATED ALWAYS AS IDENTITY,user_id int);
+insert into ss9 (user_id)
+select distinct user_id  from public."Quaterly_Final" ;
+select count(*) into count1 from ss9;
+while (loop1<=(count1)) LOOP
+select user_id into userid from ss9 where id=loop1;
+			   update initial_3 set 
+			   Initial = ( select heart_rate from public."Quaterly_Final" where date = 
+		   (select min(date) from public."Quaterly_Final" where user_id = userid and heart_rate is not null  limit 1 )	
+					    and user_id = userid and heart_rate is not null limit 1) where
+			   user_id = userid and vital ='heart_rate';
+			
+													 
+loop1 :=loop1+1;
+end LOOP;
+			 end;
+			   $BODY$;
+
+ALTER FUNCTION public.qjobs75()
+    OWNER TO postgres;
+			   
+			   
+			   
+			 
